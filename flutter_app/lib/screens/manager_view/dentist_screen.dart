@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/customs/utils.dart';
-import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_app/events/dentist_event.dart';
-import 'package:flutter_app/models/clinic.dart';
-import 'package:flutter_app/screens/new/add_screen/add_clinic.dart';
-import 'package:flutter_app/screens/new/dentist_screen.dart';
+import 'package:flutter_app/models/dentist.dart';
+import 'package:flutter_app/screens/manager_view/add_screen/add_dentist.dart';
 import 'package:flutter_app/states/clinic_state.dart';
+import 'package:flutter_app/states/dentist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class ManageScreen extends StatefulWidget {
+class DentistScreen extends StatefulWidget {
+  final String clinicId;
+
+  DentistScreen({@required this.clinicId}) : assert(clinicId != null);
+
   @override
-  _ManageScreenState createState() => _ManageScreenState();
+  _DentistScreenState createState() => _DentistScreenState();
 }
 
-class _ManageScreenState extends State<ManageScreen> {
-  List<Clinic> clinicList = [];
+class _DentistScreenState extends State<DentistScreen> {
+  List<DentistData> dentistList = [];
   bool shouldUpdate = false;
+
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
 
   FocusNode nameFocus = FocusNode();
   FocusNode phoneFocus = FocusNode();
-  FocusNode addressFocus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +53,16 @@ class _ManageScreenState extends State<ManageScreen> {
             margin: EdgeInsets.only(right: 10),
             child: InkWell(
               onTap: () async {
-                final shouldUpdate2 = await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => AddClinicScreen()));
+                final shouldUpdate2 =
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AddDentistScreen(
+                              clinicId: widget.clinicId,
+                            )));
                 setState(() {
                   this.shouldUpdate = shouldUpdate2;
                   if (shouldUpdate) {
-                    BlocProvider.of<ClinicBloc>(context).add(
-                      ClinicEventRequested(),
+                    BlocProvider.of<DentistBloc>(context).add(
+                      DentistEventRequested(clinicId: widget.clinicId),
                     );
                   }
                 });
@@ -78,7 +82,7 @@ class _ManageScreenState extends State<ManageScreen> {
         title: Center(
           child: Container(
             child: Text(
-              'Quản lý chi nhánh',
+              'Quản lý nha sỹ',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -89,9 +93,9 @@ class _ManageScreenState extends State<ManageScreen> {
         ),
       ),
       body: Container(
+        padding: EdgeInsets.only(bottom: 20),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        padding: EdgeInsets.only(bottom: 20),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
               colors: <Color>[
@@ -103,77 +107,55 @@ class _ManageScreenState extends State<ManageScreen> {
               stops: <double>[0.0, 1.0],
               tileMode: TileMode.clamp),
         ),
-        child: BlocConsumer<ClinicBloc, ClinicState>(
+        child: BlocConsumer<DentistBloc, DentistState>(
           listener: (context, state) {
-            if (state is ClinicStateSuccess) {
+            if (state is DentistStateSuccess) {
               setState(() {
-                clinicList = state.response.dataList;
+                dentistList = state.response.dataList;
               });
-              print('clinic: ${clinicList.first.name}');
+              print('dentist: ${dentistList.first.name}');
               if (shouldUpdate) {
                 setState(() {
                   shouldUpdate = false;
                 });
-                _showSnackBar('Thêm chi nhánh thành công', true);
+                _showSnackBar('Thêm nha sỹ thành công', true);
               }
-            } else if (state is ClinicEditStateSuccess) {
-              BlocProvider.of<ClinicBloc>(context).add(
-                ClinicEventRequested(),
+            } else if (state is DentistEditStateSuccess) {
+              BlocProvider.of<DentistBloc>(context).add(
+                DentistEventRequested(clinicId: widget.clinicId),
               );
-              _showSnackBar('Sửa chi nhánh thành công', true);
-            } else if (state is ClinicDelStateSuccess) {
-              BlocProvider.of<ClinicBloc>(context).add(
-                ClinicEventRequested(),
+              _showSnackBar('Sửa nha sỹ thành công', true);
+            } else if (state is DentistDelStateSuccess) {
+              BlocProvider.of<DentistBloc>(context).add(
+                DentistEventRequested(clinicId: widget.clinicId),
               );
-              _showSnackBar('Xóa chi nhánh thành công', true);
+              _showSnackBar('Xóa nha sỹ thành công', true);
             }
           },
           builder: (context, state) {
-            if (state is ClinicStateLoading) {
+            if (state is DentistStateLoading) {
               return CircularProgress();
             }
 
-            if (state is ClinicStateFailure) {
-              _showSnackBar('Không có dữ liệu', false);
-            }
-
-            if (state is ClinicStateSuccess ||
-                state is ClinicEditStateSuccess ||
-                state is ClinicDelStateSuccess) {
+            if (state is DentistStateSuccess ||
+                state is DentistEditStateSuccess ||
+                state is DentistDelStateSuccess) {
               return Container(
                 margin: EdgeInsets.all(10),
                 child: ListView.builder(
-                  physics: ScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: clinicList.length,
+                  itemCount: dentistList.length,
                   itemBuilder: (context, index) {
-                    final clinic = clinicList[index];
+                    final dentist = dentistList[index];
                     return Card(
                       child: Slidable(
                         actionPane: SlidableDrawerActionPane(),
                         actionExtentRatio: 1 / 5,
                         child: ListTile(
-                          leading: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: CustomTheme.loginGradientEnd),
-                              child: Icon(
-                                Icons.home,
-                                color: Colors.white,
-                              )),
-                          title: Text(clinic.name),
-                          subtitle: Text(clinic.address),
-                          onTap: () {
-                            BlocProvider.of<DentistBloc>(context).add(
-                                DentistEventRequested(clinicId: clinic.id));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        DentistScreen(clinicId: clinic.id)));
-                          },
+                          title: Text(dentist.name),
+                          subtitle: Text(dentist.phone),
+                          onTap: () {},
                         ),
                         secondaryActions: <Widget>[
                           new IconSlideAction(
@@ -181,9 +163,8 @@ class _ManageScreenState extends State<ManageScreen> {
                             color: Colors.black45,
                             icon: Icons.edit,
                             onTap: () => {
-                              nameController.text = clinic.name,
-                              phoneController.text = clinic.phone,
-                              addressController.text = clinic.address,
+                              nameController.text = dentist.name,
+                              phoneController.text = dentist.phone,
                               DialogUtils.showCustomDialog(context,
                                   title: 'Sửa thông tin chi nhánh',
                                   child: GestureDetector(
@@ -192,7 +173,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                           .requestFocus(FocusNode());
                                     },
                                     child: Container(
-                                      height: 305,
+                                      height: 200,
                                       width: 300,
                                       padding: EdgeInsets.all(5),
                                       child: Column(
@@ -208,7 +189,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                                     alignment:
                                                         Alignment.centerLeft,
                                                     child: Text(
-                                                      'Tên chi nhánh',
+                                                      'Tên nha sỹ',
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -218,7 +199,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                                   TextField(
                                                     maxLines: 1,
                                                     decoration: InputDecoration(
-                                                      hintText: clinic.name,
+                                                      hintText: dentist.name,
                                                       border:
                                                           OutlineInputBorder(),
                                                       labelStyle: TextStyle(
@@ -259,7 +240,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                                     keyboardType:
                                                         TextInputType.phone,
                                                     decoration: InputDecoration(
-                                                      hintText: clinic.phone,
+                                                      hintText: dentist.phone,
                                                       border:
                                                           OutlineInputBorder(),
                                                       labelStyle: TextStyle(
@@ -269,63 +250,22 @@ class _ManageScreenState extends State<ManageScreen> {
                                                     ),
                                                     controller: phoneController,
                                                     focusNode: phoneFocus,
-                                                    onSubmitted: (_) {
-                                                      addressFocus
-                                                          .requestFocus();
-                                                    },
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Container(
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 5, top: 5),
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(
-                                                      'Địa chỉ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 18),
-                                                    ),
-                                                  ),
-                                                  TextField(
-                                                    maxLines: 1,
-                                                    decoration: InputDecoration(
-                                                      hintText: clinic.address,
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      labelStyle: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    controller:
-                                                        addressController,
-                                                    focusNode: addressFocus,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          )
                                         ],
                                       ),
                                     ),
                                   ),
                                   okBtnText: 'Lưu', okBtnFunction: () {
-                                BlocProvider.of<ClinicBloc>(context).add(
-                                    ClinicEditEventRequested(
-                                        clinicId: clinic.id,
-                                        name: nameController.text,
-                                        phone: phoneController.text,
-                                        address: addressController.text));
+                                BlocProvider.of<DentistBloc>(context)
+                                    .add(DentistEditEventRequested(
+                                  dentistId: dentist.id,
+                                  name: nameController.text,
+                                  phone: phoneController.text,
+                                ));
                                 Navigator.of(context).pop();
                               })
                             },
@@ -340,15 +280,16 @@ class _ManageScreenState extends State<ManageScreen> {
                                   title: 'Cảnh báo',
                                   titleStyle: TextStyle(color: Colors.red),
                                   child: Text(
-                                    'Bạn muốn xóa chi nhánh \'${clinic.name}\' khỏi danh sách?',
+                                    'Bạn muốn xóa nha sỹ \'${dentist.name}\' khỏi danh sách?',
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w400),
                                     textAlign: TextAlign.center,
                                   ),
                                   okBtnText: 'Xóa', okBtnFunction: () {
-                                BlocProvider.of<ClinicBloc>(context).add(
-                                  ClinicDelEventRequested(clinicId: clinic.id),
+                                BlocProvider.of<DentistBloc>(context).add(
+                                  DentistDelEventRequested(
+                                      dentistId: dentist.id),
                                 );
                                 Navigator.of(context).pop();
                               })
@@ -363,7 +304,7 @@ class _ManageScreenState extends State<ManageScreen> {
             }
 
             if (state is ClinicStateFailure) {
-              return Text('get Clinic some thing went wrong!!!');
+              return Text('get Dentist some thing went wrong!!!');
             }
 
             return Center(
@@ -399,15 +340,15 @@ class _ManageScreenState extends State<ManageScreen> {
                   highlightColor: Colors.transparent,
                   splashColor: Colors.transparent,
                   child: Text(
-                    'Lấy danh sách cơ sở',
+                    'Lấy danh sách nha sỹ',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 20.0,
                         fontFamily: 'WorkSansBold'),
                   ),
                   onPressed: () {
-                    BlocProvider.of<ClinicBloc>(context).add(
-                      ClinicEventRequested(),
+                    BlocProvider.of<DentistBloc>(context).add(
+                      DentistEventRequested(clinicId: widget.clinicId),
                     );
                   },
                 ),

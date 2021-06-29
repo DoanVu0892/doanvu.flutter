@@ -1,13 +1,20 @@
 import 'package:equatable/equatable.dart';
 
+import 'base_response.dart';
+import 'dentist.dart';
+
 class User extends Equatable {
   final String name;
   final String phone;
   final String userType;
   final int status;
-  final int clinicCode;
+  final String clinicId;
+  final String clinicName;
+  final String dentistId;
+  final String dentistName;
+  final String id;
 
-  const User({this.phone, this.name, this.status, this.clinicCode, this.userType});
+  const User({this.phone, this.name, this.status, this.clinicId, this.dentistId, this.id, this.userType, this.dentistName, this.clinicName});
 
   @override
   // TODO: implement props
@@ -18,9 +25,13 @@ class User extends Equatable {
     return User(
       phone: jsonObject['phone'] ?? '',
       name: jsonObject['name'] ?? '',
-      userType: jsonObject['userType'] ?? '',// as double,
-      status: jsonObject['status'] ?? 0,// as double,
-      clinicCode: jsonObject['clinicCode'] ?? 0,// as double
+      userType: jsonObject['userType'] ?? '',
+      status: jsonObject['status'] ?? 0,
+      clinicId: jsonObject['clinicId'] ?? '',
+      clinicName: jsonObject['clinicName'] ?? '',
+      dentistId: jsonObject['dentistId'] ?? '',
+      dentistName: jsonObject['dentistName'] ?? '',
+      id: jsonObject['_id'] ?? '',
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_app/events/dentist_event.dart';
+import 'package:flutter_app/models/base_response.dart';
 import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/utils_constant.dart';
 import 'package:flutter_app/repositories/app_repository.dart';

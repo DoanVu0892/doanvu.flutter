@@ -1,13 +1,19 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/login_bloc.dart';
+import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_app/events/login_event.dart';
-import 'package:flutter_app/screens/new/main_screen.dart';
+import 'package:flutter_app/events/schedule_event.dart';
+import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/screens/customer_view/book_view.dart';
+import 'package:flutter_app/screens/customer_view/main_customer.dart';
+import 'package:flutter_app/screens/manager_view/main_screen.dart';
 import 'package:flutter_app/states/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,7 +23,8 @@ class LoginScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin{
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
   final FocusNode myFocusNodePhoneLogin = FocusNode();
@@ -38,10 +45,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _animation = Tween(begin: 30.0, end: 0.0).animate(_controller)..addListener(() {
-      setState(() {});
-    });
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _animation = Tween(begin: 30.0, end: 0.0).animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
 
     myFocusNodePhoneLogin.addListener(() {
       if (myFocusNodePhoneLogin.hasFocus) {
@@ -58,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         _controller.reverse();
       }
     });
-
   }
 
   @override
@@ -87,7 +95,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Image(
-                  height: MediaQuery.of(context).size.height > 800 ? 191.0 : 150,
+                  height:
+                      MediaQuery.of(context).size.height > 800 ? 191.0 : 150,
                   fit: BoxFit.fill,
                   image: const AssetImage('assets/images/nhakhoa.jpeg')),
             ),
@@ -233,25 +242,25 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
 
     return WillPopScope(
-      onWillPop: () => showDialog<bool>(
-        context: context,
-        builder: (c) => AlertDialog(
-          title: Text('Cảnh báo'),
-          content: Text('Bạn có muốn thoát ứng dụng?'),
-          actions: [
-            // ignore: deprecated_member_use
-            FlatButton(
-              child: Text('Đồng ý'),
-              onPressed: () => Navigator.pop(c, true),
-            ),
-            // ignore: deprecated_member_use
-            FlatButton(
-              child: Text('Không'),
-              onPressed: () => Navigator.pop(c, false),
-            ),
-          ],
-        ),
-      ),
+      // onWillPop: () => showDialog<bool>(
+      //   context: context,
+      //   builder: (c) => AlertDialog(
+      //     title: Center(child: Text('Cảnh báo', style: TextStyle(color: Colors.redAccent),)),
+      //     content: Text('Bạn muốn thoát ứng dụng?'),
+      //     actions: [
+      //       // ignore: deprecated_member_use
+      //       FlatButton(
+      //         child: Text('Đồng ý',style: TextStyle(color: Colors.redAccent),),
+      //         onPressed: () => {Navigator.pop(c, true)},
+      //       ),
+      //       // ignore: deprecated_member_use
+      //       FlatButton(
+      //         child: Text('Không',style: TextStyle(color: Colors.blueAccent),),
+      //         onPressed: () => Navigator.pop(c, false),
+      //       ),
+      //     ],
+      //   ),
+      // ),
       child: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());
@@ -277,14 +286,22 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   listener: (context, loginState) {
                     if (loginState is LoginStateSuccess) {
                       //checkUser
-                      if(loginState.response.data.user.userType == 'manager'){
+                      if (loginState.response.data.user.userType == 'manager') {
                         BlocProvider.of<ClinicBloc>(context)
                             .add(ClinicEventRequested());
-                      }else{
-                        print('chưa code');
+                      } else {
+                        DateTime selectedDate = DateTime.now();
+                        final appointmentDate =
+                            formatDate(selectedDate, [yyyy, '-', mm, '-', dd]);
+                        BlocProvider.of<ScheduleBloc>(context).add(
+                            ScheduleEventRequested(
+                                dentistId:
+                                    loginState.response.data.user.dentistId,
+                                appointmentDate: appointmentDate,
+                                workShift: '1'));
                       }
                       Navigator.push(
-                          context,_createRoute(loginState.response.data.user.userType));
+                          context, _createRoute(loginState.response.data.user));
                     }
                     if (loginState is LoginStateFailure) {
                       _showSnackBar("'Đăng nhập bị lỗi!!!'", false);
@@ -310,34 +327,49 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Route _createRoute(String userType) {
-    if(userType == 'customer'){
-      return null;
-    }else if(userType == 'manager'){
+  Route _createRoute(User _user) {
+    if (_user.userType == 'customer') {
+      if (_user != null) {
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => MainCustomerScreen(user: _user,),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+      } else {
+        _showSnackBar('không lấy được thông tin chi nhánh | nha sỹ', false);
+        return null;
+      }
+    } else if (_user.userType == 'manager') {
       return PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => MainScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return child;
         },
       );
-    }else{
-      _showSnackBar('sai định dạng người dùng: $userType', false);
+    } else {
+      _showSnackBar('sai định dạng người dùng: ${_user.userType}', false);
       return null;
     }
   }
+
   void _showSnackBar(String msg, bool success) {
     CustomSnackBar(
         context,
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(success ? Icons.done : Icons.warning_amber_outlined, color: success ? Colors.green : Colors.red,),
+            Icon(
+              success ? Icons.done : Icons.warning_amber_outlined,
+              color: success ? Colors.green : Colors.red,
+            ),
             SizedBox(
               width: 20,
             ),
             Text(
               msg,
-              style: TextStyle(color: success ? Colors.green : Colors.red, fontSize: 18),
+              style: TextStyle(
+                  color: success ? Colors.green : Colors.red, fontSize: 18),
             )
           ],
         ));

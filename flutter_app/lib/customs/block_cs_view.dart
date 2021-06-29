@@ -15,22 +15,26 @@ import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'custom_circular_progress.dart';
 
 // ignore: must_be_immutable
-class BlockItem extends StatefulWidget {
+class BlockCSItem extends StatefulWidget {
   final Schedule schedule;
   final String dentistId;
   final String appointmentDate;
+  final String patientName;
+  final String patientId;
 
-  BlockItem({
+  BlockCSItem({
     this.schedule,
     this.dentistId,
     this.appointmentDate,
+    this.patientId,
+    this.patientName,
   }) : assert(dentistId != null);
 
   @override
-  _BlockItemState createState() => _BlockItemState();
+  _BlockCSItemState createState() => _BlockCSItemState();
 }
 
-class _BlockItemState extends State<BlockItem> {
+class _BlockCSItemState extends State<BlockCSItem> {
   Color colorItem;
 
   String title;
@@ -44,7 +48,7 @@ class _BlockItemState extends State<BlockItem> {
   Widget build(BuildContext context) {
     if (widget.schedule.booked == 'booked') {
       colorItem = Colors.red;
-      title = 'Đã đặt\n ${widget.schedule.block.patientName}';
+      title = 'Đã đặt\n${widget.schedule.block.patientName}';
     } else if (widget.schedule.booked == 'available') {
       colorItem = Colors.green;
       title = 'Thời gian: ${widget.schedule.time}';
@@ -55,6 +59,7 @@ class _BlockItemState extends State<BlockItem> {
 
     return GestureDetector(
         child: Container(
+          alignment: Alignment.centerLeft,
           child: Center(
             child: Text(
               title,
@@ -67,92 +72,28 @@ class _BlockItemState extends State<BlockItem> {
         ),
         onTap: () => (widget.schedule.booked == 'available')
             ? {
+                print('note: ${widget.schedule.block.note}'),
                 DialogUtils.showCustomDialog(context,
                     okBtnText: 'Đặt lịch',
                     title: 'Đặt lịch ${widget.schedule.time}',
-                    child: BlocConsumer<PatientBloc, PatientState>(
-                      listener: (context, state) {
-                        if (state is PatientStateSuccess) {
-                          setState(() {
-                            patientList = state.response.data;
-                          });
-                        }
-                      },
-                      builder: (context, state) {
-                        if (state is PatientStateLoading) {
-                          return Container(
-                            child: CircularProgress(),
-                            width: (MediaQuery.of(context).size.width - 100),
-                            height: 180,
-                          );
-                        }
-                        return Container(
-                          width: (MediaQuery.of(context).size.width - 100),
-                          height: 180,
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(
-                                // flex: 1,
-                                child: SearchableDropdown<Patient>(
-                                  isCaseSensitiveSearch: true,
-                                  isExpanded: true,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.grey.shade900,
-                                      fontWeight: FontWeight.w400),
-                                  hint: Text(
-                                    "Chọn bệnh nhân",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.grey.shade900,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  value: _patient,
-                                  items: patientList.map((Patient patient) {
-                                    return DropdownMenuItem<Patient>(
-                                      value: patient,
-                                      child: Container(
-                                        color: Colors.transparent,
-                                        child: new Text(patient.name),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (data) {
-                                    print('value $data');
-                                    setState(() {
-                                      this._patient = data;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: TextField(
-                                  maxLines: null,
-                                  decoration: InputDecoration(
-                                    hintText: 'Nhập ghi chú',
-                                    labelText: 'Ghi chú',
-                                    border: OutlineInputBorder(),
-                                    labelStyle: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  controller: noteController,
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                    child: TextField(
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        hintText: 'Nhập ghi chú',
+                        labelText: 'Ghi chú',
+                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      controller: noteController,
                     ),
                     okBtnFunction: () => {
                           print(
-                              'textNote: ${noteController.text} -patientId: ${_patient.id} -patientName: ${_patient.name} -dentistId: ${widget.dentistId} -appointmentDate: ${widget.appointmentDate} -blockId: ${widget.schedule.blockId}'),
+                              'textNote: ${noteController.text} -patientId: ${widget.patientId} -patientName: ${widget.patientName} -dentistId: ${widget.dentistId} -appointmentDate: ${widget.appointmentDate} -blockId: ${widget.schedule.blockId}'),
                           BlocProvider.of<ScheduleBloc>(context).add(
                               ScheduleAddEventRequested(
-                                  patientId: _patient.id,
-                                  patientName: _patient.name,
+                                  patientId: widget.patientId,
+                                  patientName: widget.patientName,
                                   dentistId: widget.dentistId,
                                   appointmentDate: widget.appointmentDate,
                                   note: noteController.text,
@@ -163,8 +104,6 @@ class _BlockItemState extends State<BlockItem> {
                   print('changeState');
                   colorItem = Colors.blue;
                 }),
-                BlocProvider.of<PatientBloc>(context)
-                    .add(PatientEventRequested(dentistId: widget.dentistId)),
               }
             : {
                 (widget.schedule.booked == 'booked')

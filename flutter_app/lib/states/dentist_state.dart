@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app/models/base_response.dart';
 import 'package:flutter_app/models/dentist.dart';
 
 abstract class DentistState extends Equatable {

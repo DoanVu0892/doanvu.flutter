@@ -15,7 +15,7 @@ import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_app/models/schedule_add.dart';
-import 'package:flutter_app/screens/new/manage_screen.dart';
+import 'package:flutter_app/screens/manager_view/manage_screen.dart';
 import 'package:flutter_app/states/clinic_state.dart';
 import 'package:flutter_app/states/dentist_state.dart';
 import 'package:flutter_app/states/schedule_state.dart';
@@ -70,13 +70,31 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () => showDialog<bool>(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: Center(child: Text('Cảnh báo', style: TextStyle(color: Colors.redAccent),)),
+          content: Container(height: 20 ,child: Center(child: Text('Bạn muốn đăng xuất?'))),
+          actions: [
+            // ignore: deprecated_member_use
+            FlatButton(
+              child: Text('Đồng ý',style: TextStyle(color: Colors.redAccent),),
+              onPressed: () => {Navigator.pop(c, true)},
+            ),
+            // ignore: deprecated_member_use
+            FlatButton(
+              child: Text('Không',style: TextStyle(color: Colors.blueAccent),),
+              onPressed: () => Navigator.pop(c, false),
+            ),
+          ],
+        ),
+      ),
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          // automaticallyImplyLeading: false,
           title: Center(
             child: Container(
-              margin: EdgeInsets.only(left: 70),
+              // margin: EdgeInsets.only(left: 70),
               child: Text(
                 'Đặt lịch',
                 style: TextStyle(
@@ -219,7 +237,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       children: scheduleList
                           .map((item) => BlockItem(
-                                dentistData: _dentist,
+                                dentistId: _dentist.id,
                                 schedule: item,
                                 appointmentDate: appointmentDate,
                               ))

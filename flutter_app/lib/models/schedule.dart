@@ -5,15 +5,15 @@ class Block extends Equatable {
   final String id;
   final String note;
   final int status;
-  final String parientId;
-  final String parientName;
+  final String patientId;
+  final String patientName;
 
   const Block(
       {@required this.id,
       this.note,
       this.status,
-      this.parientId,
-      this.parientName});
+      this.patientId,
+      this.patientName});
 
   @override
   // TODO: implement props
@@ -24,8 +24,8 @@ class Block extends Equatable {
       id: jsonObject['_id'] ?? '',
       note: jsonObject['note'] ?? '',
       status: jsonObject['status'] ?? 0,
-      parientId: jsonObject['parientId'] ?? '',
-      parientName: jsonObject['parientName'] ?? '',
+      patientId: jsonObject['patientId'] ?? '',
+      patientName: jsonObject['patientName'] ?? '',
     );
   }
 }
