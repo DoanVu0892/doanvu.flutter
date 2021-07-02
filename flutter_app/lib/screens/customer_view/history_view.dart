@@ -50,12 +50,11 @@ class _HistoryViewState extends State<HistoryView> {
           }
 
           if(state is HistoryStateSuccess){
-            return SingleChildScrollView(
-              child: Container(
+            return Container(
                 margin: EdgeInsets.all(10),
                   child: ListView.builder(
                       scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
+                      shrinkWrap: false,
                       itemCount: dataHistory.length,
                       itemBuilder:(context, index){
                         final history = dataHistory[index];
@@ -76,7 +75,7 @@ class _HistoryViewState extends State<HistoryView> {
                           ),
                         );
                       }
-                  )),
+                  ),
             );
           }
 

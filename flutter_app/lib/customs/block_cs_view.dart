@@ -1,18 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/blocs/patient_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/utils.dart';
-import 'package:flutter_app/events/patient_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
-import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/patient.dart';
 import 'package:flutter_app/models/schedule.dart';
-import 'package:flutter_app/states/patient_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
-
-import 'custom_circular_progress.dart';
 
 // ignore: must_be_immutable
 class BlockCSItem extends StatefulWidget {
@@ -21,14 +14,16 @@ class BlockCSItem extends StatefulWidget {
   final String appointmentDate;
   final String patientName;
   final String patientId;
+  final VoidCallback onChange;
 
-  BlockCSItem({
-    this.schedule,
-    this.dentistId,
-    this.appointmentDate,
-    this.patientId,
-    this.patientName,
-  }) : assert(dentistId != null);
+  BlockCSItem(
+      {this.schedule,
+      this.dentistId,
+      this.appointmentDate,
+      this.patientId,
+      this.patientName,
+      this.onChange})
+      : assert(dentistId != null);
 
   @override
   _BlockCSItemState createState() => _BlockCSItemState();
@@ -40,8 +35,6 @@ class _BlockCSItemState extends State<BlockCSItem> {
   String title;
 
   List<Patient> patientList = [];
-
-  Patient _patient;
   TextEditingController noteController = new TextEditingController();
 
   @override
@@ -72,7 +65,7 @@ class _BlockCSItemState extends State<BlockCSItem> {
         ),
         onTap: () => (widget.schedule.booked == 'available')
             ? {
-                print('note: ${widget.schedule.block.note}'),
+                widget.onChange,
                 DialogUtils.showCustomDialog(context,
                     okBtnText: 'Đặt lịch',
                     title: 'Đặt lịch ${widget.schedule.time}',
@@ -100,14 +93,11 @@ class _BlockCSItemState extends State<BlockCSItem> {
                                   blockId: widget.schedule.blockId)),
                           Navigator.of(context).pop(),
                         }),
-                setState(() {
-                  print('changeState');
-                  colorItem = Colors.blue;
-                }),
               }
             : {
                 (widget.schedule.booked == 'booked')
                     ? {
+                        widget.onChange,
                         print('note: ${widget.schedule.block.note}'),
                         DialogUtils.showCustomDialog(context,
                             okBtnText: 'Hủy lịch',

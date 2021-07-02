@@ -159,17 +159,12 @@ class _BlockItemState extends State<BlockItem> {
                                   blockId: widget.schedule.blockId)),
                           Navigator.of(context).pop(),
                         }),
-                setState(() {
-                  print('changeState');
-                  colorItem = Colors.blue;
-                }),
                 BlocProvider.of<PatientBloc>(context)
                     .add(PatientEventRequested(dentistId: widget.dentistId)),
               }
             : {
                 (widget.schedule.booked == 'booked')
                     ? {
-                        print('note: ${widget.schedule.block.note}'),
                         DialogUtils.showCustomDialog(context,
                             okBtnText: 'Hủy lịch',
                             title: 'Hủy lịch ${widget.schedule.time}',

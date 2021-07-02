@@ -35,6 +35,7 @@ class _BookViewState extends State<BookView> {
   DateTime selectedDate = DateTime.now();
   String title = formatDate(DateTime.now(), [dd, '-', mm, '-', yyyy]);
   List<Schedule> scheduleList = [];
+  bool startBooked = false;
 
   void setColorSelected(int index) {
     setState(() {
@@ -62,6 +63,13 @@ class _BookViewState extends State<BookView> {
     appointmentDate = formatDate(selectedDate, [yyyy, '-', mm, '-', dd]);
     setColorSelected(shiftWork);
     print('shiftWork: $shiftWork');
+
+    if (!this.startBooked) {
+      BlocProvider.of<ScheduleBloc>(context).add(ScheduleEventRequested(
+          dentistId: widget.user.dentistId,
+          appointmentDate: formatDate(DateTime.now(), [yyyy, '-', mm, '-', dd]),
+          workShift: '1'));
+    }
   }
 
   @override
@@ -137,6 +145,9 @@ class _BookViewState extends State<BookView> {
                   _showSnackBar('lấy lịch lỗi', false);
                 }
                 if (state is ScheduleAddStateSuccess) {
+                  setState(() {
+                    this.startBooked = false;
+                  });
                   print('state: ${state.response.data.id}');
                   BlocProvider.of<ScheduleBloc>(context).add(
                       ScheduleEventRequested(
@@ -145,6 +156,9 @@ class _BookViewState extends State<BookView> {
                           workShift: shiftWork.toString()));
                 }
                 if (state is ScheduleDelStateSuccess) {
+                  setState(() {
+                    this.startBooked = false;
+                  });
                   print('state: $state');
                   BlocProvider.of<ScheduleBloc>(context).add(
                       ScheduleEventRequested(
@@ -175,6 +189,11 @@ class _BookViewState extends State<BookView> {
                                 patientId: widget.user.id,
                                 patientName: widget.user.name,
                                 appointmentDate: appointmentDate,
+                                onChange: () {
+                                  setState(() {
+                                    this.startBooked = true;
+                                  });
+                                },
                               ))
                           .toList(),
                     ),

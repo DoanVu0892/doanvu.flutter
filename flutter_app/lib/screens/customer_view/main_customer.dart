@@ -26,6 +26,7 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> {
   String title = 'Đặt lịch';
 
   void _onItemTapped(int index) {
+    print('onTapItem');
     setState(() {
       _selectedIndex = index;
       title = _selectedIndex == 0 ? 'Đặt lịch' : 'Lịch sử';
@@ -34,12 +35,6 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> {
 
   Widget getBody( )  {
     if(this._selectedIndex == 0) {
-      BlocProvider.of<ScheduleBloc>(context).add(
-          ScheduleEventRequested(
-              dentistId: widget.user.dentistId,
-              appointmentDate: formatDate(DateTime.now(), [yyyy, '-', mm, '-', dd]),
-              workShift: '1'));
-
       return BookView(user: widget.user);
     } else if(this._selectedIndex==1) {
       BlocProvider.of<HistoryBloc>(context).add(
@@ -52,6 +47,7 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('check run');
     return WillPopScope(
         onWillPop: () => showDialog<bool>(
               context: context,

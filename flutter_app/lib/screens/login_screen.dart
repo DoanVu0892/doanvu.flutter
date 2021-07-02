@@ -1,4 +1,5 @@
 import 'package:date_format/date_format.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
@@ -19,12 +20,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
+  // final bool pushed;
+  // LoginScreen({@required this.pushed}) : assert(pushed != null);
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
+  bool pushed = false;
   AnimationController _controller;
   Animation _animation;
   final FocusNode myFocusNodePhoneLogin = FocusNode();
@@ -45,6 +49,20 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      print("onMessage: ${message.messageId}");
+      setState(() {
+        pushed = true;
+      });
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      print("onMessageOpenedApp: ${message.notification} ${message.data}");
+      setState(() {
+        pushed = true;
+      });
+    }
+    );
+    //
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animation = Tween(begin: 30.0, end: 0.0).animate(_controller)
@@ -330,6 +348,7 @@ class _LoginScreenState extends State<LoginScreen>
   Route _createRoute(User _user) {
     if (_user.userType == 'customer') {
       if (_user != null) {
+        print('pushed: $pushed');
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => MainCustomerScreen(user: _user,),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
