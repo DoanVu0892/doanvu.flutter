@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "175028617566",
+    "project_id": "nhakhoavananh-6789",
+    "storage_bucket": "nhakhoavananh-6789.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175028617566:android:9f0f2f01417320d5100fcf",
+        "android_client_info": {
+          "package_name": "com.vn.dential"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175028617566-3evgoo83p9u12aerh8mbfonis9745ha8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKB7bvs6RpTkVYD3UudKw4pWzqy93U6vE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "175028617566-3evgoo83p9u12aerh8mbfonis9745ha8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "175028617566-t91nj871308ith0tpkrtjir1biqgt8v6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vn.dential"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

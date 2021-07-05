@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class LeaveScheduleView extends StatefulWidget {
   @override
@@ -8,6 +9,13 @@ class LeaveScheduleView extends StatefulWidget {
 class _LeaveScheduleViewState extends State<LeaveScheduleView> {
   @override
   Widget build(BuildContext context) {
-
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Cài lịch nghỉ"),
+      ),
+      body: Center(
+        child: Text("cái gì gì đấy"),
+      ),
+    );
   }
 }
