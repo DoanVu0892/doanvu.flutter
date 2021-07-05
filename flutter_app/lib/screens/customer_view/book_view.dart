@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/block_cs_view.dart';
-import 'package:flutter_app/customs/block_view.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
@@ -452,7 +451,7 @@ class _BookViewState extends State<BookView> {
 
   void _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
-      initialEntryMode: DatePickerEntryMode.input,
+      initialEntryMode: DatePickerEntryMode.calendar,
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2021),

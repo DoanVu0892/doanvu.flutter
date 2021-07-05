@@ -6,7 +6,6 @@ import 'package:flutter_app/blocs/history_bloc.dart';
 import 'package:flutter_app/blocs/login_bloc.dart';
 import 'package:flutter_app/blocs/patient_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
-import 'package:flutter_app/blocs/update_view_bloc.dart';
 import 'package:flutter_app/customs/pushNotification.dart';
 import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/screens/login_screen.dart';
@@ -22,7 +21,6 @@ Future<void> main() async {
 
   runApp(MultiBlocProvider(
       providers: [
-        BlocProvider<UpdateViewBloc>(create: (context) => UpdateViewBloc()),
         BlocProvider<LoginBloc>(
             create: (context) => LoginBloc(appRepository: appRepository)),
         BlocProvider<ScheduleBloc>(

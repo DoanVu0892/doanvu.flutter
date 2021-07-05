@@ -14,12 +14,12 @@ import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/schedule.dart';
-import 'package:flutter_app/models/schedule_add.dart';
-import 'package:flutter_app/screens/manager_view/manage_screen.dart';
 import 'package:flutter_app/states/clinic_state.dart';
 import 'package:flutter_app/states/dentist_state.dart';
 import 'package:flutter_app/states/schedule_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'manage_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -67,23 +67,58 @@ class _MainScreenState extends State<MainScreen> {
     print('shiftWork: $shiftWork');
   }
 
+  void handleClick(String value) async {
+    switch (value) {
+      case 'Quản lý':
+        {
+          //manage navigator
+          BlocProvider.of<ClinicBloc>(context).add(
+            ClinicEventRequested(),
+          );
+          bool shouldUpdate = await Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => ManageScreen()));
+          if (shouldUpdate)
+            BlocProvider.of<ClinicBloc>(context).add(
+              ClinicEventRequested(),
+            );
+        }
+        break;
+      case 'Lịch nghỉ':
+        {
+          print('onClick Cài đặt lịch nghỉ');
+        }
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () => showDialog<bool>(
         context: context,
         builder: (c) => AlertDialog(
-          title: Center(child: Text('Cảnh báo', style: TextStyle(color: Colors.redAccent),)),
-          content: Container(height: 20 ,child: Center(child: Text('Bạn muốn đăng xuất?'))),
+          title: Center(
+              child: Text(
+            'Cảnh báo',
+            style: TextStyle(color: Colors.redAccent),
+          )),
+          content: Container(
+              height: 20, child: Center(child: Text('Bạn muốn đăng xuất?'))),
           actions: [
             // ignore: deprecated_member_use
             FlatButton(
-              child: Text('Đồng ý',style: TextStyle(color: Colors.redAccent),),
+              child: Text(
+                'Đồng ý',
+                style: TextStyle(color: Colors.redAccent),
+              ),
               onPressed: () => {Navigator.pop(c, true)},
             ),
             // ignore: deprecated_member_use
             FlatButton(
-              child: Text('Không',style: TextStyle(color: Colors.blueAccent),),
+              child: Text(
+                'Không',
+                style: TextStyle(color: Colors.blueAccent),
+              ),
               onPressed: () => Navigator.pop(c, false),
             ),
           ],
@@ -106,7 +141,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           backgroundColor: CustomTheme.loginGradientStart,
-          actions: [
+          actions: <Widget>[
+            /*
             Container(
               margin: EdgeInsets.only(right: 10),
               child: InkWell(
@@ -127,7 +163,19 @@ class _MainScreenState extends State<MainScreen> {
                     height: 30,
                     child: Center(child: Icon(Icons.person))),
               ),
-            )
+            )*/
+            PopupMenuButton<String>(
+              onSelected: handleClick,
+              itemBuilder: (BuildContext context) {
+                return {'Quản lý', 'Lịch nghỉ'}.map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
+              },
+              icon: Icon(Icons.menu),
+            ),
           ],
         ),
         body: Container(
@@ -279,9 +327,8 @@ class _MainScreenState extends State<MainScreen> {
           builder: (context, state) {
             if (state is ClinicStateLoading) {
               return Container(
-                padding: EdgeInsets.only(top: 40, bottom: 20),
-                  child: CircularProgress()
-              );
+                  padding: EdgeInsets.only(top: 40, bottom: 20),
+                  child: CircularProgress());
             }
             return clinicList != null
                 ? Text('')
@@ -610,13 +657,17 @@ class _MainScreenState extends State<MainScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(success ? Icons.done : Icons.warning_amber_outlined, color: success ? Colors.green : Colors.red,),
+            Icon(
+              success ? Icons.done : Icons.warning_amber_outlined,
+              color: success ? Colors.green : Colors.red,
+            ),
             SizedBox(
               width: 20,
             ),
             Text(
               msg,
-              style: TextStyle(color: success ? Colors.green : Colors.red, fontSize: 18),
+              style: TextStyle(
+                  color: success ? Colors.green : Colors.red, fontSize: 18),
             )
           ],
         ));
@@ -635,7 +686,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
-      initialEntryMode: DatePickerEntryMode.input,
+      initialEntryMode: DatePickerEntryMode.calendar,
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2021),

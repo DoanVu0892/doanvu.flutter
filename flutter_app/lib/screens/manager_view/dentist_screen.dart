@@ -153,6 +153,15 @@ class _DentistScreenState extends State<DentistScreen> {
                         actionPane: SlidableDrawerActionPane(),
                         actionExtentRatio: 1 / 5,
                         child: ListTile(
+                          leading: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: CustomTheme.loginGradientEnd),
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                              )),
                           title: Text(dentist.name),
                           subtitle: Text(dentist.phone),
                           onTap: () {},
