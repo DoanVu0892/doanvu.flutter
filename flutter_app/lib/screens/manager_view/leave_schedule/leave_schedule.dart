@@ -33,7 +33,8 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
   List<bool> isSelected = List.generate(3, (_) => false);
   DateTime selectedStartDate = DateTime.now();
   DateTime selectedEndDate = DateTime.now();
-  String title = formatDate(DateTime.now(), [dd, '-', mm, '-', yyyy]);
+  String titleStartDate = formatDate(DateTime.now(), [dd, '-', mm, '-', yyyy]);
+  String titleEndDate = formatDate(DateTime.now(), [dd, '-', mm, '-', yyyy]);
   String startDate = formatDate(DateTime.now(), [yyyy, '-', mm, '-', dd]);
   String endDate = formatDate(DateTime.now(), [yyyy, '-', mm, '-', dd]);
 
@@ -401,7 +402,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                       splashColor: Colors.transparent,
                       child: Container(
                         child: Text(
-                          title,
+                          titleStartDate,
                           style: TextStyle(
                               color: Colors.grey.shade900,
                               fontSize: 16.0,
@@ -426,7 +427,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                       splashColor: Colors.transparent,
                       child: Container(
                         child: Text(
-                          title,
+                          titleEndDate,
                           style: TextStyle(
                               color: Colors.grey.shade900,
                               fontSize: 16.0,
@@ -636,7 +637,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
     if (picked != null)
       setState(() {
         selectedStartDate = picked;
-        title = formatDate(selectedStartDate, [dd, '-', mm, '-', yyyy]);
+        titleStartDate = formatDate(selectedStartDate, [dd, '-', mm, '-', yyyy]);
         startDate = formatDate(selectedStartDate, [yyyy, '-', mm, '-', dd]);
       });
   }
@@ -655,7 +656,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
     if (picked != null)
       setState(() {
         selectedEndDate = picked;
-        title = formatDate(selectedEndDate, [dd, '-', mm, '-', yyyy]);
+        titleEndDate = formatDate(selectedEndDate, [dd, '-', mm, '-', yyyy]);
         endDate = formatDate(selectedEndDate, [yyyy, '-', mm, '-', dd]);
       });
   }
