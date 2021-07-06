@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
+import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
-import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_app/events/dentist_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddDentistScreen extends StatefulWidget{
+class AddDentistScreen extends StatefulWidget {
   final String clinicId;
+
   AddDentistScreen({this.clinicId});
+
   @override
   _AddDentistScreenState createState() => _AddDentistScreenState();
 }
@@ -26,7 +27,7 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
@@ -76,8 +77,16 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
           child: Center(
             child: Column(
               children: <Widget>[
-                Padding(padding: EdgeInsets.only(top: 50,bottom: 10),
-                  child: Text('Nhập thông tin nha sỹ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),),),
+                Padding(
+                  padding: EdgeInsets.only(top: 50, bottom: 10),
+                  child: Text(
+                    'Nhập thông tin nha sỹ',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
                 Stack(
                   alignment: Alignment.topCenter,
                   children: <Widget>[
@@ -94,7 +103,10 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 10.0, bottom: 10.0, left: 25.0, right: 25.0),
+                                  top: 10.0,
+                                  bottom: 10.0,
+                                  left: 25.0,
+                                  right: 25.0),
                               child: TextField(
                                 focusNode: myFocusNodeName,
                                 controller: nameController,
@@ -107,7 +119,8 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
                                   icon: Icon(Icons.home),
                                   hintText: 'Nhập tên',
                                   hintStyle: TextStyle(
-                                      fontFamily: 'WorkSansSemiBold', fontSize: 17.0),
+                                      fontFamily: 'WorkSansSemiBold',
+                                      fontSize: 17.0),
                                 ),
                                 onSubmitted: (_) {
                                   myFocusNodePhone.requestFocus();
@@ -121,7 +134,10 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 10.0, bottom: 10.0, left: 25.0, right: 25.0),
+                                  top: 10.0,
+                                  bottom: 10.0,
+                                  left: 25.0,
+                                  right: 25.0),
                               child: TextField(
                                 focusNode: myFocusNodePhone,
                                 controller: phoneController,
@@ -135,7 +151,8 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
                                   icon: Icon(Icons.phone_android),
                                   hintText: 'Nhập số điện thoại',
                                   hintStyle: const TextStyle(
-                                      fontFamily: 'WorkSansSemiBold', fontSize: 17.0),
+                                      fontFamily: 'WorkSansSemiBold',
+                                      fontSize: 17.0),
                                 ),
                                 onSubmitted: (_) {
                                   _toggleAddClinicButton(context);
@@ -177,8 +194,8 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
                         highlightColor: Colors.transparent,
                         splashColor: Colors.transparent,
                         child: const Padding(
-                          padding:
-                          EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 42.0),
                           child: Text(
                             'Thêm',
                             style: TextStyle(
@@ -187,7 +204,7 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
                                 fontFamily: 'WorkSansBold'),
                           ),
                         ),
-                        onPressed: (){
+                        onPressed: () {
                           _toggleAddClinicButton(context);
                         },
                       ),
@@ -203,9 +220,41 @@ class _AddDentistScreenState extends State<AddDentistScreen> {
   }
 
   void _toggleAddClinicButton(BuildContext context) {
-    BlocProvider.of<DentistBloc>(context).add(
-        DentistAddEventRequested(clinicId: widget.clinicId, name: nameController.text, phone: phoneController.text,)
-    );
+    if (nameController.text == null ||
+        nameController.text.isEmpty ||
+        phoneController.text == null ||
+        phoneController.text.isEmpty) {
+      _showSnackBar('Vui lòng điền đầy đủ thông tin', false);
+      return;
+    }
+
+    BlocProvider.of<DentistBloc>(context).add(DentistAddEventRequested(
+      clinicId: widget.clinicId,
+      name: nameController.text,
+      phone: phoneController.text,
+    ));
     Navigator.of(context).pop(true);
+  }
+
+  void _showSnackBar(String msg, bool success) {
+    CustomSnackBar(
+        context,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              success ? Icons.done : Icons.warning_amber_outlined,
+              color: success ? Colors.green : Colors.red,
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Text(
+              msg,
+              style: TextStyle(
+                  color: success ? Colors.green : Colors.red, fontSize: 18),
+            )
+          ],
+        ));
   }
 }

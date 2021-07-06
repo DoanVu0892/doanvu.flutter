@@ -14,6 +14,8 @@ import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/schedule.dart';
+import 'package:flutter_app/repositories/app_repository.dart';
+import 'package:flutter_app/screens/manager_view/leave_schedule/leave_schedule.dart';
 import 'package:flutter_app/states/clinic_state.dart';
 import 'package:flutter_app/states/dentist_state.dart';
 import 'package:flutter_app/states/schedule_state.dart';
@@ -22,11 +24,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'manage_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  final AppRepository appRepository;
+
+  const MainScreen({@required this.appRepository})
+      : assert(appRepository != null);
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Clinic _clinic;
   DentistData _dentist;
   List<DentistData> dentistData = [];
@@ -65,6 +72,65 @@ class _MainScreenState extends State<MainScreen> {
     }
     setColorSelected(shiftWork);
     print('shiftWork: $shiftWork');
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      return;
+    } else if (state == AppLifecycleState.paused) {
+      print('run onBackground');
+    } else if (state == AppLifecycleState.resumed) {
+      print('accessToken: ${widget.appRepository.accessToken}');
+      final checkLogin = await widget.appRepository.checkLogin();
+      print('call checkLogin API: $checkLogin');
+      if (checkLogin && widget.appRepository.isLogin) {
+        final abc = await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (c) => AlertDialog(
+            title: Center(
+                child: Text(
+                  'Cảnh báo',
+                  style: TextStyle(color: Colors.redAccent),
+                )),
+            content: Container(
+              alignment: Alignment.center,
+              height: 40,
+              child: Center(
+                  child: Text(
+                    'Phiên đăng nhập đã hết hạn\n Bạn cần đăng nhập lại!', textAlign: TextAlign.center,)),
+            ),
+            actions: [
+              FlatButton(
+                child: Text(
+                  'Đồng ý',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                onPressed: () => {
+                  // Navigator.popAndPushNamed(context, '/login'),
+                  Navigator.pop(context,true),
+                  widget.appRepository.isLogin = false,
+                },
+              ),
+            ],
+          ),
+        );
+        if(abc){
+          Navigator.pop(context,true);
+        }
+      }
+    }
   }
 
   void handleClick(String value) async {
@@ -86,6 +152,10 @@ class _MainScreenState extends State<MainScreen> {
       case 'Lịch nghỉ':
         {
           print('onClick Cài đặt lịch nghỉ');
+          BlocProvider.of<ClinicBloc>(context).add(
+            ClinicEventRequested(),
+          );
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => LeaveScheduleView()));
         }
         break;
     }
@@ -170,7 +240,9 @@ class _MainScreenState extends State<MainScreen> {
                 return {'Quản lý', 'Lịch nghỉ'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
-                    child: Text(choice),
+                    child: Container(
+                        child: Center(child: Text(choice, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),)),
+                    ),
                   );
                 }).toList();
               },
@@ -637,13 +709,18 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
             onPressed: () {
-              setState(() {
-                searched = true;
-              });
-              BlocProvider.of<ScheduleBloc>(context).add(ScheduleEventRequested(
-                  dentistId: _dentist.id,
-                  appointmentDate: appointmentDate,
-                  workShift: shiftWork.toString()));
+              if (_dentist != null && appointmentDate != null) {
+                setState(() {
+                  searched = true;
+                });
+                BlocProvider.of<ScheduleBloc>(context).add(
+                    ScheduleEventRequested(
+                        dentistId: _dentist.id,
+                        appointmentDate: appointmentDate,
+                        workShift: shiftWork.toString()));
+              } else {
+                _showSnackBar('Vui lòng chọn đầy đủ thông tin', false);
+              }
             },
           ),
         )

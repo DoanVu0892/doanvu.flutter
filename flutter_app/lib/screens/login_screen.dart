@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:date_format/date_format.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,22 +8,28 @@ import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/login_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
+import 'package:flutter_app/customs/pushNotification.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_app/events/login_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/screens/customer_view/book_view.dart';
 import 'package:flutter_app/screens/customer_view/main_customer.dart';
 import 'package:flutter_app/screens/manager_view/main_screen.dart';
 import 'package:flutter_app/states/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
-  // final bool pushed;
-  // LoginScreen({@required this.pushed}) : assert(pushed != null);
+  final AppRepository appRepository;
+
+  LoginScreen({@required this.appRepository}) : assert(appRepository != null);
+
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
 }
@@ -38,30 +46,35 @@ class _LoginScreenState extends State<LoginScreen>
   TextEditingController loginPasswordController = new TextEditingController();
 
   bool _obscureTextPassword = true;
+  User user;
 
   @override
   void dispose() {
     myFocusNodePhoneLogin.dispose();
     myFocusNodePasswordLogin.dispose();
+    // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+
+    // WidgetsBinding.instance.addObserver(this);
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("onMessage: ${message.messageId}");
+      print("onMessage: ${message.messageId} ${message.data['message']}");
       setState(() {
         pushed = true;
       });
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print("onMessageOpenedApp: ${message.notification} ${message.data}");
+      print(
+          "onMessageOpenedApp: ${message.notification} ${message.data['message']}");
       setState(() {
         pushed = true;
       });
-    }
-    );
+    });
     //
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
@@ -304,6 +317,10 @@ class _LoginScreenState extends State<LoginScreen>
                   listener: (context, loginState) {
                     if (loginState is LoginStateSuccess) {
                       //checkUser
+                      setState(() {
+                        user = loginState.response.data.user;
+                      });
+
                       if (loginState.response.data.user.userType == 'manager') {
                         BlocProvider.of<ClinicBloc>(context)
                             .add(ClinicEventRequested());
@@ -322,7 +339,7 @@ class _LoginScreenState extends State<LoginScreen>
                           context, _createRoute(loginState.response.data.user));
                     }
                     if (loginState is LoginStateFailure) {
-                      _showSnackBar("'Đăng nhập bị lỗi!!!'", false);
+                      _showSnackBar("Đăng nhập bị lỗi !!!", false);
                     }
                   },
                   builder: (context, loginState) {
@@ -350,7 +367,11 @@ class _LoginScreenState extends State<LoginScreen>
       if (_user != null) {
         print('pushed: $pushed');
         return PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => MainCustomerScreen(user: _user,),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              MainCustomerScreen(
+            user: _user,
+            appRepository: widget.appRepository,
+          ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return child;
           },
@@ -361,7 +382,7 @@ class _LoginScreenState extends State<LoginScreen>
       }
     } else if (_user.userType == 'manager') {
       return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => MainScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) => MainScreen(appRepository: widget.appRepository,),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return child;
         },
@@ -395,6 +416,13 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _toggleSignInButton() {
+    if(loginPhoneController.text == null
+        || loginPhoneController.text.isEmpty
+        || loginPasswordController.text == null
+        || loginPasswordController.text.isEmpty){
+      _showSnackBar("Vui lòng điền đầy đủ thông tin", false);
+      return;
+    }
     BlocProvider.of<LoginBloc>(context).add(LoginEventRequested(
         phoneNumber: loginPhoneController.text,
         pwd: loginPasswordController.text));

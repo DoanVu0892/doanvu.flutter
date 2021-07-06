@@ -9,12 +9,65 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
     groupId: "Notification_group");
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationplugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling a background message : ${message.messageId}");
   print(message.data);
+  RemoteNotification notification = message.notification;
+  AndroidNotification android = message.notification?.android;
+  if (notification != null && android != null) {
+    AndroidNotificationDetails notificationDetails = AndroidNotificationDetails(
+        channel.id, channel.name, channel.description,
+        importance: Importance.max,
+        priority: Priority.high,
+        groupKey: channel.groupId);
+    NotificationDetails notificationDetailsPlatformSpefics =
+        NotificationDetails(android: notificationDetails);
+    flutterLocalNotificationplugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        notificationDetailsPlatformSpefics);
+  } else if (message.data['message'] != null) {
+    AndroidNotificationDetails notificationDetails = AndroidNotificationDetails(
+        channel.id, channel.name, channel.description,
+        importance: Importance.max,
+        priority: Priority.high,
+        groupKey: channel.groupId);
+    NotificationDetails notificationDetailsPlatformSpefics =
+        NotificationDetails(android: notificationDetails);
+    flutterLocalNotificationplugin.show(
+        message.notification.hashCode,
+        message.messageType,
+        message.data['message'],
+        notificationDetailsPlatformSpefics);
+  }
+
+  List<ActiveNotification> activeNotifications =
+      await flutterLocalNotificationplugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.getActiveNotifications();
+  if (activeNotifications.length > 0) {
+    List<String> lines =
+        activeNotifications.map((e) => e.title.toString()).toList();
+    InboxStyleInformation inboxStyleInformation = InboxStyleInformation(lines,
+        contentTitle: "${activeNotifications.length - 1} messages",
+        summaryText: "${activeNotifications.length - 1} messages");
+    AndroidNotificationDetails groupNotificationDetails =
+        AndroidNotificationDetails(
+            channel.id, channel.name, channel.description,
+            styleInformation: inboxStyleInformation,
+            setAsGroupSummary: true,
+            groupKey: channel.groupId);
+
+    NotificationDetails groupNotificationDetailsPlatformSpefics =
+        NotificationDetails(android: groupNotificationDetails);
+    await flutterLocalNotificationplugin.show(
+        0, '', '', groupNotificationDetailsPlatformSpefics);
+  }
 }
 
 class FirebaseNotification {
@@ -22,12 +75,11 @@ class FirebaseNotification {
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    await flutterLocalNotificationplugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    await flutterLocalNotificationplugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    //?.createNotificationChannel(channel);
     var intializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -37,8 +89,8 @@ class FirebaseNotification {
         print('id: $id, title: $title, body: $body');
       },
     );
-    var initializationSettings =
-    InitializationSettings(android: intializationSettingsAndroid, iOS: initializationSettingsIOS);
+    var initializationSettings = InitializationSettings(
+        android: intializationSettingsAndroid, iOS: initializationSettingsIOS);
 
     flutterLocalNotificationplugin.initialize(initializationSettings);
     await FirebaseMessaging.instance
@@ -53,41 +105,55 @@ class FirebaseNotification {
       AndroidNotification android = message.notification?.android;
       if (notification != null && android != null) {
         AndroidNotificationDetails notificationDetails =
-        AndroidNotificationDetails(
-            channel.id, channel.name, channel.description,
-            importance: Importance.max,
-            priority: Priority.high,
-            groupKey: channel.groupId);
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                groupKey: channel.groupId);
         NotificationDetails notificationDetailsPlatformSpefics =
-        NotificationDetails(android: notificationDetails);
+            NotificationDetails(android: notificationDetails);
         flutterLocalNotificationplugin.show(
             notification.hashCode,
             notification.title,
             notification.body,
             notificationDetailsPlatformSpefics);
+      } else if (message.data['message'] != null) {
+        AndroidNotificationDetails notificationDetails =
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                groupKey: channel.groupId);
+        NotificationDetails notificationDetailsPlatformSpefics =
+            NotificationDetails(android: notificationDetails);
+        flutterLocalNotificationplugin.show(
+            message.notification.hashCode,
+            message.messageType,
+            message.data['message'],
+            notificationDetailsPlatformSpefics);
       }
 
       List<ActiveNotification> activeNotifications =
-      await flutterLocalNotificationplugin
-          .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-          ?.getActiveNotifications();
+          await flutterLocalNotificationplugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.getActiveNotifications();
       if (activeNotifications.length > 0) {
         List<String> lines =
-        activeNotifications.map((e) => e.title.toString()).toList();
+            activeNotifications.map((e) => e.title.toString()).toList();
         InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
             lines,
             contentTitle: "${activeNotifications.length - 1} messages",
             summaryText: "${activeNotifications.length - 1} messages");
         AndroidNotificationDetails groupNotificationDetails =
-        AndroidNotificationDetails(
-            channel.id, channel.name, channel.description,
-            styleInformation: inboxStyleInformation,
-            setAsGroupSummary: true,
-            groupKey: channel.groupId);
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                styleInformation: inboxStyleInformation,
+                setAsGroupSummary: true,
+                groupKey: channel.groupId);
 
         NotificationDetails groupNotificationDetailsPlatformSpefics =
-        NotificationDetails(android: groupNotificationDetails);
+            NotificationDetails(android: groupNotificationDetails);
         await flutterLocalNotificationplugin.show(
             0, '', '', groupNotificationDetailsPlatformSpefics);
       }
@@ -97,41 +163,55 @@ class FirebaseNotification {
       AndroidNotification android = message.notification?.android;
       if (notification != null && android != null) {
         AndroidNotificationDetails notificationDetails =
-        AndroidNotificationDetails(
-            channel.id, channel.name, channel.description,
-            importance: Importance.max,
-            priority: Priority.high,
-            groupKey: channel.groupId);
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                groupKey: channel.groupId);
         NotificationDetails notificationDetailsPlatformSpefics =
-        NotificationDetails(android: notificationDetails);
+            NotificationDetails(android: notificationDetails);
         flutterLocalNotificationplugin.show(
             notification.hashCode,
             notification.title,
             notification.body,
             notificationDetailsPlatformSpefics);
+      } else if (message.data['message'] != null) {
+        AndroidNotificationDetails notificationDetails =
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                groupKey: channel.groupId);
+        NotificationDetails notificationDetailsPlatformSpefics =
+            NotificationDetails(android: notificationDetails);
+        flutterLocalNotificationplugin.show(
+            message.notification.hashCode,
+            message.messageType,
+            message.data['message'],
+            notificationDetailsPlatformSpefics);
       }
 
       List<ActiveNotification> activeNotifications =
-      await flutterLocalNotificationplugin
-          .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-          ?.getActiveNotifications();
+          await flutterLocalNotificationplugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.getActiveNotifications();
       if (activeNotifications.length > 0) {
         List<String> lines =
-        activeNotifications.map((e) => e.title.toString()).toList();
+            activeNotifications.map((e) => e.title.toString()).toList();
         InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
             lines,
             contentTitle: "${activeNotifications.length - 1} messages",
             summaryText: "${activeNotifications.length - 1} messages");
         AndroidNotificationDetails groupNotificationDetails =
-        AndroidNotificationDetails(
-            channel.id, channel.name, channel.description,
-            styleInformation: inboxStyleInformation,
-            setAsGroupSummary: true,
-            groupKey: channel.groupId);
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                styleInformation: inboxStyleInformation,
+                setAsGroupSummary: true,
+                groupKey: channel.groupId);
 
         NotificationDetails groupNotificationDetailsPlatformSpefics =
-        NotificationDetails(android: groupNotificationDetails);
+            NotificationDetails(android: groupNotificationDetails);
         await flutterLocalNotificationplugin.show(
             0, '', '', groupNotificationDetailsPlatformSpefics);
       }
@@ -141,41 +221,55 @@ class FirebaseNotification {
       AndroidNotification android = message.notification?.android;
       if (notification != null && android != null) {
         AndroidNotificationDetails notificationDetails =
-        AndroidNotificationDetails(
-            channel.id, channel.name, channel.description,
-            importance: Importance.max,
-            priority: Priority.high,
-            groupKey: channel.groupId);
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                groupKey: channel.groupId);
         NotificationDetails notificationDetailsPlatformSpefics =
-        NotificationDetails(android: notificationDetails);
+            NotificationDetails(android: notificationDetails);
         flutterLocalNotificationplugin.show(
             notification.hashCode,
             notification.title,
             notification.body,
             notificationDetailsPlatformSpefics);
+      } else if (message.data['message'] != null) {
+        AndroidNotificationDetails notificationDetails =
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                importance: Importance.max,
+                priority: Priority.high,
+                groupKey: channel.groupId);
+        NotificationDetails notificationDetailsPlatformSpefics =
+            NotificationDetails(android: notificationDetails);
+        flutterLocalNotificationplugin.show(
+            message.notification.hashCode,
+            message.messageType,
+            message.data['message'],
+            notificationDetailsPlatformSpefics);
       }
 
       List<ActiveNotification> activeNotifications =
-      await flutterLocalNotificationplugin
-          .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-          ?.getActiveNotifications();
+          await flutterLocalNotificationplugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.getActiveNotifications();
       if (activeNotifications.length > 0) {
         List<String> lines =
-        activeNotifications.map((e) => e.title.toString()).toList();
+            activeNotifications.map((e) => e.title.toString()).toList();
         InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
             lines,
             contentTitle: "${activeNotifications.length - 1} messages",
             summaryText: "${activeNotifications.length - 1} messages");
         AndroidNotificationDetails groupNotificationDetails =
-        AndroidNotificationDetails(
-            channel.id, channel.name, channel.description,
-            styleInformation: inboxStyleInformation,
-            setAsGroupSummary: true,
-            groupKey: channel.groupId);
+            AndroidNotificationDetails(
+                channel.id, channel.name, channel.description,
+                styleInformation: inboxStyleInformation,
+                setAsGroupSummary: true,
+                groupKey: channel.groupId);
 
         NotificationDetails groupNotificationDetailsPlatformSpefics =
-        NotificationDetails(android: groupNotificationDetails);
+            NotificationDetails(android: groupNotificationDetails);
         await flutterLocalNotificationplugin.show(
             0, '', '', groupNotificationDetailsPlatformSpefics);
       }
@@ -188,8 +282,9 @@ class FirebaseNotification {
     return token;
   }
 
-  Future<void> requestPermissionNotification() async{
-    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+  Future<void> requestPermissionNotification() async {
+    NotificationSettings settings =
+        await FirebaseMessaging.instance.requestPermission(
       alert: true,
       badge: true,
       sound: true,
@@ -197,12 +292,14 @@ class FirebaseNotification {
     );
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
       print('User granted provisional permission');
     } else {
       print('User declined or has not accepted permission');
     }
   }
+
   subscribeToTopic(String topic) async {
     await FirebaseMessaging.instance.subscribeToTopic(topic);
   }

@@ -113,7 +113,7 @@ class _DentistScreenState extends State<DentistScreen> {
               setState(() {
                 dentistList = state.response.dataList;
               });
-              print('dentist: ${dentistList.first.name}');
+              // print('dentist: ${dentistList.first.name}');
               if (shouldUpdate) {
                 setState(() {
                   shouldUpdate = false;

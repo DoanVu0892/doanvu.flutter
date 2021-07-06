@@ -6,10 +6,12 @@ import 'package:flutter_app/models/base_response.dart';
 import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/history_response.dart';
+import 'package:flutter_app/models/leave_schedule.dart';
 import 'package:flutter_app/models/patient.dart';
 import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_app/models/schedule_add.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/states/leave_schedule_state.dart';
 import 'package:http/http.dart' as http;
 
 const baseUrl = 'http://171.244.132.41:9443';
@@ -36,12 +38,15 @@ final _patientUrl = (dentistId) => '$baseUrl/patient/$dentistId/byDentist';
 final _patientSearchUrl =
     (dentistId, keyWord) => '$_patientUrl?search=$keyWord';
 final _historyUrl = (patientId) => '$baseUrl/history/list?patientId=$patientId';
+final _checkLoginUrl = '$baseUrl/info';
+final _leaveScheduleUrl = '$baseUrl/leaveSchedule/add';
 
 class AppRepository {
   http.Client httpClient;
 
   AppRepository({@required this.httpClient}) : assert(httpClient != null);
   String accessToken;
+  bool isLogin = false;
   Map<String, String> headersLogin = {'Content-Type': 'application/json'};
 
   Future<Response> login(String phoneNumber, String pwd) async {
@@ -54,11 +59,27 @@ class AppRepository {
       print('response ${response.body}');
       Response responseData = Response.fromJson(jsonDecode(response.body));
       accessToken = responseData.data.accessToken;
+      isLogin = true;
       httpClient.close();
       return responseData;
     } else {
       httpClient.close();
       throw Exception('Error Login of: $phoneNumber');
+    }
+  }
+
+  Future<bool> checkLogin() async {
+    httpClient.close();
+    httpClient = new http.Client();
+    print('accessToken: $accessToken');
+    final response = await httpClient
+        .get(_checkLoginUrl, headers: {'Authorization': 'Bearer $accessToken'});
+    if (response.statusCode == 200) {
+      httpClient.close();
+      return false;
+    } else {
+      httpClient.close();
+      return true;
     }
   }
 
@@ -280,6 +301,38 @@ class AppRepository {
     }
   }
 
+  Future<ResLeaveSchedule> setLeaveSchedule(String dentistId, String startDate,
+      String endDate, String shiftWork, String reason) async {
+    httpClient = new http.Client();
+    print(jsonEncode({
+      'dentistId': dentistId,
+      'startDate': startDate,
+      'endDate': endDate,
+      'shiftWork': shiftWork,
+      'reason': reason,
+    }));
+    final response = await httpClient.post(_leaveScheduleUrl,
+        body: jsonEncode({
+          'dentistId': dentistId,
+          'startDate': startDate,
+          'endDate': endDate,
+          'shiftWork': shiftWork,
+          'reason': reason,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $accessToken'
+        });
+    if(response.statusCode == 200){
+      httpClient.close();
+      print('rsponse: ${response.body}');
+      return ResLeaveSchedule.fromJson(jsonDecode(response.body));
+    }else{
+      throw Exception('Error set LeaveSchedule: $dentistId');
+    }
+  }
+
   Future<ScheduleDelResponse> cancelBook(String bookedId, String reason) async {
     httpClient = new http.Client();
     print('cancelUrl: ${_cancelScheduleUrl(bookedId)}');
@@ -331,11 +384,12 @@ class AppRepository {
       throw Exception('Error search Parients of: $dentistId');
     }
   }
-  
+
   Future<HistoryResponse> getHistory(String patientId) async {
     httpClient = new http.Client();
-    final response = await httpClient.get(_historyUrl(patientId), headers: {'Authorization': 'Bearer $accessToken'});
-    if(response.statusCode == 200){
+    final response = await httpClient.get(_historyUrl(patientId),
+        headers: {'Authorization': 'Bearer $accessToken'});
+    if (response.statusCode == 200) {
       httpClient.close();
       print('response ${response.body}');
       return HistoryResponse.fromJson(jsonDecode(response.body));

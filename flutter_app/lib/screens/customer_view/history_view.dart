@@ -70,7 +70,7 @@ class _HistoryViewState extends State<HistoryView> {
                                   color: Colors.white,
                                 )),
                             title: Text('Thời gian: ${formatDate(DateTime.parse(history.appointmentDate), [yyyy, '-', mm, '-', dd])} : ${history.time} '),
-                            subtitle: Text('Trạng thái: ${history.status ==1 ? 'Đã khám': 'Đã hủy, lí do: ${history.reason}'}'),
+                            subtitle: Text('Trạng thái: ${history.status == 1 ? 'Đã đặt': 'Đã hủy, lí do: ${history.reason}'}'),
                             onTap: () {},
                           ),
                         );

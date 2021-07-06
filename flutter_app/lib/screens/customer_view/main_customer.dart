@@ -7,6 +7,7 @@ import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/events/history_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/screens/customer_view/book_view.dart';
 import 'package:flutter_app/screens/customer_view/history_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,16 +15,83 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// This is the stateful widget that the main application instantiates.
 class MainCustomerScreen extends StatefulWidget {
   final User user;
-  const MainCustomerScreen({Key key, this.user}) : assert(user != null), super(key: key);
+  final AppRepository appRepository;
+  const MainCustomerScreen({Key key, this.user, this.appRepository}) : assert(user != null), super(key: key);
 
   @override
   State<MainCustomerScreen> createState() => _MainCustomerScreenState();
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
-class _MainCustomerScreenState extends State<MainCustomerScreen> {
+class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   String title = 'Đặt lịch';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+    if(state == AppLifecycleState.inactive || state == AppLifecycleState.detached){
+      return;
+    }else if(state == AppLifecycleState.paused){
+      print('run onBackground');
+    }else if(state == AppLifecycleState.resumed){
+      print('call checkLogin API');
+      print('accessToken: ${widget.appRepository.accessToken}');
+      final checkLogin = await widget.appRepository.checkLogin();
+      print('call checkLogin API: $checkLogin');
+      if (checkLogin && widget.appRepository.isLogin) {
+       final abc = await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (c) => AlertDialog(
+            title: Center(
+                child: Text(
+                  'Cảnh báo',
+                  style: TextStyle(color: Colors.redAccent),
+                )),
+            content: Container(
+              alignment: Alignment.center,
+              height: 40,
+              child: Center(
+                  child: Text(
+                    'Phiên đăng nhập đã hết hạn\n Bạn cần đăng nhập lại!', textAlign: TextAlign.center,)),
+            ),
+            actions: [
+              FlatButton(
+                child: Text(
+                  'Đồng ý',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                onPressed: () => {
+                  // Navigator.popAndPushNamed(context, '/login'),
+                  Navigator.pop(context,true),
+                  widget.appRepository.isLogin = false,
+                },
+              ),
+            ],
+          ),
+        );
+       if(abc){
+         Navigator.pop(context,true);
+       }
+      }
+    }
+  }
 
   void _onItemTapped(int index) {
     print('onTapItem');

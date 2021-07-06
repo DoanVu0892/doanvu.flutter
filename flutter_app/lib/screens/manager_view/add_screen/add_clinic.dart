@@ -1,18 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
+import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class AddClinicScreen extends StatelessWidget{
+class AddClinicScreen extends StatefulWidget{
+  @override
+  _AddClinicScreenState createState() => _AddClinicScreenState();
+}
+
+class _AddClinicScreenState extends State<AddClinicScreen> {
   final FocusNode myFocusNodeName = FocusNode();
+
   final FocusNode myFocusNodePhone = FocusNode();
+
   final FocusNode myFocusNodeAddress = FocusNode();
 
   TextEditingController nameController = new TextEditingController();
+
   TextEditingController phoneController = new TextEditingController();
+
   TextEditingController addressController = new TextEditingController();
 
   @override
@@ -220,10 +229,43 @@ class AddClinicScreen extends StatelessWidget{
       ),
     );
   }
+
   void _toggleAddClinicButton(BuildContext context) {
+    if (nameController.text == null ||
+        nameController.text.isEmpty ||
+        phoneController.text == null ||
+        phoneController.text.isEmpty ||
+        addressController.text.isEmpty ||
+        addressController.text == null) {
+      _showSnackBar(context,'Vui lòng điền đầy đủ thông tin', false);
+      return;
+    }
+
     BlocProvider.of<ClinicBloc>(context).add(
       ClinicAddEventRequested(name: nameController.text, phone: phoneController.text, address: addressController.text)
     );
     Navigator.of(context).pop(true);
+  }
+
+  void _showSnackBar(BuildContext context ,String msg, bool success) {
+    CustomSnackBar(
+        context,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              success ? Icons.done : Icons.warning_amber_outlined,
+              color: success ? Colors.green : Colors.red,
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Text(
+              msg,
+              style: TextStyle(
+                  color: success ? Colors.green : Colors.red, fontSize: 18),
+            )
+          ],
+        ));
   }
 }

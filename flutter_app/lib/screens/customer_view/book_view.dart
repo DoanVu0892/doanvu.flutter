@@ -200,11 +200,11 @@ class _BookViewState extends State<BookView> {
                 }
                 if (state is ScheduleStateFailure) {
                   return Center(
-                    child: Text('getSchedule error'),
+                    child: Text('Lấy thông tin lịch lỗi'),
                   );
                 }
                 return Center(
-                  child: Text('getSchedule error'),
+                  child: Text('Lấy thông tin lịch lỗi'),
                 );
               },
             ),

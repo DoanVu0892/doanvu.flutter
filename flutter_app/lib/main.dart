@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/bloc_observer.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
 import 'package:flutter_app/blocs/history_bloc.dart';
+import 'package:flutter_app/blocs/leave_schedule_bloc.dart';
 import 'package:flutter_app/blocs/login_bloc.dart';
 import 'package:flutter_app/blocs/patient_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
@@ -15,12 +17,14 @@ import 'package:overlay_support/overlay_support.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp();
   Bloc.observer = AppBlocObserver();
   final AppRepository appRepository = AppRepository(httpClient: http.Client());
 
   runApp(MultiBlocProvider(
       providers: [
+        BlocProvider<LeaveScheduleBloc>(
+            create: (context) => LeaveScheduleBloc(appRepository: appRepository)),
         BlocProvider<LoginBloc>(
             create: (context) => LoginBloc(appRepository: appRepository)),
         BlocProvider<ScheduleBloc>(
@@ -50,7 +54,7 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   FirebaseNotification firebase;
   bool pushed = false;
 
@@ -66,6 +70,14 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     firebase = FirebaseNotification();
     handleAsync();
+
+    WidgetsBinding.instance.addObserver(this);
+
+  }
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
 @override
@@ -75,8 +87,11 @@ Widget build(BuildContext context) {
       title: 'Dential',
       home: BlocProvider(
         create: (context) => LoginBloc(appRepository: widget.appRepository),
-        child: LoginScreen(),
+        child: LoginScreen(appRepository: widget.appRepository,),
       ),
+      routes: {
+        "/login" : (BuildContext context) => new LoginScreen(appRepository: widget.appRepository),
+      },
     ),
   );
 }}
