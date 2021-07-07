@@ -137,10 +137,9 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                       _showSnackBar('Đặt lịch nghỉ lỗi', false);
                     }
                     new Future.delayed(
-                        const Duration(milliseconds: Constant.duration),
-                            () {
-                          Navigator.pop(context);
-                        });
+                        const Duration(milliseconds: Constant.duration), () {
+                      Navigator.pop(context);
+                    });
                   },
                   builder: (context, state) {
                     if (state is LeaveScheduleLoading) {
@@ -441,82 +440,83 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                 ),
               ],
             )),
-        if(showShift) Container(
-          margin: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            color: Colors.white,
-          ),
-          child: ToggleButtons(
-            children: <Widget>[
-              Container(
-                width: 88,
-                child: Center(
-                  child: Text(
-                    'SA',
-                    style: TextStyle(
-                        color: colorAM,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold),
+        if (showShift)
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              color: Colors.white,
+            ),
+            child: ToggleButtons(
+              children: <Widget>[
+                Container(
+                  width: 88,
+                  child: Center(
+                    child: Text(
+                      'SA',
+                      style: TextStyle(
+                          color: colorAM,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                width: 84,
-                child: Center(
-                  child: Text(
-                    'CH',
-                    style: TextStyle(
-                        color: colorPM,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold),
+                Container(
+                  width: 84,
+                  child: Center(
+                    child: Text(
+                      'CH',
+                      style: TextStyle(
+                          color: colorPM,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                width: 88,
-                child: Center(
-                  child: Text(
-                    'ALL',
-                    style: TextStyle(
-                        color: colorAll,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold),
+                Container(
+                  width: 88,
+                  child: Center(
+                    child: Text(
+                      'ALL',
+                      style: TextStyle(
+                          color: colorAll,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
-              ),
-            ],
-            onPressed: (int index) {
-              if (isSelected[index] != true) {
-                setState(() {
-                  for (int buttonIndex = 0;
-                      buttonIndex < isSelected.length;
-                      buttonIndex++) {
-                    if (buttonIndex == index) {
-                      isSelected[index] = !isSelected[index];
-                    } else {
-                      isSelected[buttonIndex] = false;
+              ],
+              onPressed: (int index) {
+                if (isSelected[index] != true) {
+                  setState(() {
+                    for (int buttonIndex = 0;
+                        buttonIndex < isSelected.length;
+                        buttonIndex++) {
+                      if (buttonIndex == index) {
+                        isSelected[index] = !isSelected[index];
+                      } else {
+                        isSelected[buttonIndex] = false;
+                      }
                     }
-                  }
-                  if (isSelected[0] == true) {
-                    shiftWork = 'am';
-                  } else if (isSelected[1] == true) {
-                    shiftWork = 'pm';
-                  } else {
-                    shiftWork = 'all';
-                  }
-                  print('shiftWork: $shiftWork');
-                  setColorSelected(shiftWork);
-                });
-              }
-            },
-            isSelected: isSelected,
-            fillColor: CustomTheme.loginGradientEnd,
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            borderColor: Colors.white,
-            selectedBorderColor: Colors.white,
+                    if (isSelected[0] == true) {
+                      shiftWork = 'am';
+                    } else if (isSelected[1] == true) {
+                      shiftWork = 'pm';
+                    } else {
+                      shiftWork = 'all';
+                    }
+                    print('shiftWork: $shiftWork');
+                    setColorSelected(shiftWork);
+                  });
+                }
+              },
+              isSelected: isSelected,
+              fillColor: CustomTheme.loginGradientEnd,
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderColor: Colors.white,
+              selectedBorderColor: Colors.white,
+            ),
           ),
-        ),
         Container(
           height: 50,
           padding: EdgeInsets.only(left: 10, right: 10),
@@ -638,9 +638,17 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
     if (picked != null)
       setState(() {
         selectedStartDate = picked;
-        titleStartDate = formatDate(selectedStartDate, [dd, '-', mm, '-', yyyy]);
+        titleStartDate =
+            formatDate(selectedStartDate, [dd, '-', mm, '-', yyyy]);
         startDate = formatDate(selectedStartDate, [yyyy, '-', mm, '-', dd]);
+        if (endDate == startDate) {
+          showShift = true;
+        } else {
+          showShift = false;
+        }
       });
+
+    print("showShift: $showShift");
   }
 
   void _selectEndDate(BuildContext context) async {
@@ -659,9 +667,9 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
         selectedEndDate = picked;
         titleEndDate = formatDate(selectedEndDate, [dd, '-', mm, '-', yyyy]);
         endDate = formatDate(selectedEndDate, [yyyy, '-', mm, '-', dd]);
-        if(endDate == startDate){
+        if (endDate == startDate) {
           showShift = true;
-        }else{
+        } else {
           showShift = false;
         }
       });
