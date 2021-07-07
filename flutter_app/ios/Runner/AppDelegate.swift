@@ -17,20 +17,20 @@ import AVFoundation
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
-    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let deviceTokenString = deviceToken.hexString
-        print("deviceToken-APNs: ",deviceTokenString)
-        Messaging.messaging().apnsToken = deviceToken
-        print("deviceToken-FCM: ",Messaging.messaging().fcmToken!)
-        super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
-    }
-    override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("userInfo: ",userInfo)
-    }
+//    override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        let deviceTokenString = deviceToken.hexString
+//        print("deviceToken-APNs: ",deviceTokenString)
+//        Messaging.messaging().apnsToken = deviceToken
+//        print("deviceToken-FCM: ",Messaging.messaging().fcmToken!)
+//        super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+//    }
+//    override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        print("userInfo: ",userInfo)
+//    }
 }
-extension Data {
-    var hexString: String {
-        let hexString = map { String(format: "%02.2hhx", $0) }.joined()
-        return hexString
-    }
-}
+//extension Data {
+//    var hexString: String {
+//        let hexString = map { String(format: "%02.2hhx", $0) }.joined()
+//        return hexString
+//    }
+//}

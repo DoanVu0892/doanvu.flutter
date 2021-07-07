@@ -44,7 +44,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
 
   TextEditingController noteController = TextEditingController();
   FocusNode noteFocus = FocusNode();
-  bool showShift = false;
+  bool showShift = true;
 
   void setColorSelected(String shiftWork) {
     setState(() {
@@ -665,5 +665,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
           showShift = false;
         }
       });
+
+    print("showShift: $showShift");
   }
 }
