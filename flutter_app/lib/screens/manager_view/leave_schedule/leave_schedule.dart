@@ -44,6 +44,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
 
   TextEditingController noteController = TextEditingController();
   FocusNode noteFocus = FocusNode();
+  bool showShift = false;
 
   void setColorSelected(String shiftWork) {
     setState(() {
@@ -440,7 +441,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                 ),
               ],
             )),
-        Container(
+        if(showShift) Container(
           margin: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -658,6 +659,11 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
         selectedEndDate = picked;
         titleEndDate = formatDate(selectedEndDate, [dd, '-', mm, '-', yyyy]);
         endDate = formatDate(selectedEndDate, [yyyy, '-', mm, '-', dd]);
+        if(endDate == startDate){
+          showShift = true;
+        }else{
+          showShift = false;
+        }
       });
   }
 }
