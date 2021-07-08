@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:io' show Platform;
 
 import 'package:date_format/date_format.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -47,6 +48,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   bool _obscureTextPassword = true;
   User user;
+  String platform = "os";
 
   @override
   void dispose() {
@@ -60,7 +62,16 @@ class _LoginScreenState extends State<LoginScreen>
   void initState() {
     super.initState();
 
-    // WidgetsBinding.instance.addObserver(this);
+    if (Platform.isAndroid) {
+      setState(() {
+        platform = 'android';
+      });
+    } else if (Platform.isIOS) {
+      setState(() {
+        platform = 'iOS';
+      });
+    }
+    print("platform: $platform}");
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print("onMessage: ${message.messageId} ${message.data['message']}");

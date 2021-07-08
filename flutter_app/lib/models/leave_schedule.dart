@@ -66,13 +66,13 @@ class ResLeaveSchedule extends BaseResponse {
     final data = Map<String, dynamic>.from(jsonObject['data']);
     print('data ${jsonEncode(data)}');
     return ResLeaveSchedule(
-      status2: data['status'],
-      id: data['_id'],
-      dentistId: data['dentistId'],
-      startDate: data['startDate'],
-      endDate: data['endDate'],
-      shiftWork: data['shiftWork'],
-      reason: data['reason'],
+      status2: data['status'] ?? 0,
+      id: data['_id'] ?? '',
+      dentistId: data['dentistId'] ?? '',
+      startDate: data['startDate'] ?? '',
+      endDate: data['endDate'] ?? '',
+      shiftWork: data['shiftWork'] ?? '',
+      reason: data['reason'] ?? '',
     );
   }
 }
