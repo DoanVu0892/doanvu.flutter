@@ -10,10 +10,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: must_be_immutable
 class BlockCSItem extends StatefulWidget {
   final Schedule schedule;
-  final String dentistId;
+  final int dentistId;
   final String appointmentDate;
   final String patientName;
-  final String patientId;
+  final int patientId;
   final VoidCallback onChange;
 
   BlockCSItem(

@@ -20,44 +20,50 @@ class DentistBloc extends Bloc<DentistEvent, DentistState> {
     if (dentistEvent is DentistEventRequested) {
       yield DentistStateLoading();
       try {
-        final DentistResponse response = await new Future.delayed(const Duration(milliseconds: Constant.duration), (){
-          return appRepository.getDentist(dentistEvent.clinicId);
+        final DentistResponse response = await new Future.delayed(
+            const Duration(milliseconds: Constant.duration), () {
+          return appRepository.getDentist();
         });
         yield DentistStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
         yield DentistStateFailure();
       }
-    }else if(dentistEvent is DentistAddEventRequested){
+    } else if (dentistEvent is DentistAddEventRequested) {
       yield DentistStateLoading();
-      try{
-        final BaseResponse response = await new Future.delayed(Duration(milliseconds: Constant.duration),(){
-          return appRepository.addDentist(dentistEvent.clinicId, dentistEvent.name, dentistEvent.phone);
+      try {
+        final BaseResponse response = await new Future.delayed(
+            Duration(milliseconds: Constant.duration), () {
+          return appRepository.addDentist(
+              dentistEvent.clinicId, dentistEvent.name, dentistEvent.phone);
         });
         yield DentistAddStateSuccess(response: response);
-      }catch(ex){
+      } catch (ex) {
         print('ex: $ex');
         yield DentistStateFailure();
       }
-    }else if(dentistEvent is DentistEditEventRequested){
+    } else if (dentistEvent is DentistEditEventRequested) {
       yield DentistStateLoading();
-      try{
-        final BaseResponse response = await new Future.delayed(Duration(milliseconds: Constant.duration),(){
-          return appRepository.editDentist(dentistEvent.dentistId, dentistEvent.name, dentistEvent.phone);
+      try {
+        final BaseResponse response = await new Future.delayed(
+            Duration(milliseconds: Constant.duration), () {
+          return appRepository.editDentist(
+              dentistEvent.dentistId, dentistEvent.name, dentistEvent.phone);
         });
         yield DentistEditStateSuccess(response: response);
-      }catch(ex){
+      } catch (ex) {
         print('ex: $ex');
         yield DentistStateFailure();
       }
-    }else if(dentistEvent is DentistDelEventRequested){
+    } else if (dentistEvent is DentistDelEventRequested) {
       yield DentistStateLoading();
-      try{
-        final BaseResponse response = await new Future.delayed(Duration(milliseconds: Constant.duration),(){
+      try {
+        final BaseResponse response = await new Future.delayed(
+            Duration(milliseconds: Constant.duration), () {
           return appRepository.delDentist(dentistEvent.dentistId);
         });
         yield DentistDelStateSuccess(response: response);
-      }catch(ex){
+      } catch (ex) {
         print('ex: $ex');
         yield DentistStateFailure();
       }

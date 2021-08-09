@@ -1,18 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-abstract class ClinicEvent extends Equatable{
+abstract class ClinicEvent extends Equatable {
   const ClinicEvent();
 }
 
-
-class ClinicEventRequested extends ClinicEvent{
+class ClinicEventRequested extends ClinicEvent {
   const ClinicEventRequested();
   @override
   // TODO: implement props
   List<Object> get props => [];
 }
 
-class ClinicAddEventRequested extends ClinicEvent{
+class ClinicAddEventRequested extends ClinicEvent {
   final String name;
   final String phone;
   final String address;
@@ -23,22 +22,25 @@ class ClinicAddEventRequested extends ClinicEvent{
   List<Object> get props => [phone];
 }
 
-class ClinicEditEventRequested extends ClinicEvent{
-  final String clinicId;
+class ClinicEditEventRequested extends ClinicEvent {
+  final int clinicId;
   final String name;
   final String phone;
   final String address;
 
-  const ClinicEditEventRequested({this.clinicId, this.name, this.phone, this.address});
+  const ClinicEditEventRequested(
+      {this.clinicId, this.name, this.phone, this.address});
   @override
   // TODO: implement props
   List<Object> get props => [clinicId];
 }
 
-class ClinicDelEventRequested extends ClinicEvent{
-  final String clinicId;
+class ClinicDelEventRequested extends ClinicEvent {
+  final int clinicId;
 
-  const ClinicDelEventRequested({this.clinicId,});
+  const ClinicDelEventRequested({
+    this.clinicId,
+  });
   @override
   // TODO: implement props
   List<Object> get props => [clinicId];

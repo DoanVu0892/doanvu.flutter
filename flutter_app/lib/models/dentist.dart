@@ -6,7 +6,7 @@ import 'base_response.dart';
 
 class DentistData extends Equatable {
   final int status;
-  final String id;
+  final int id;
   final String name;
   final String phone;
   final String clinicId;
@@ -20,7 +20,7 @@ class DentistData extends Equatable {
   factory DentistData.fromJson(dynamic jsonObject) {
     return DentistData(
       status: jsonObject['status'] ?? 0,
-      id: jsonObject['_id'] ?? '',
+      id: jsonObject['_id'] ?? 0,
       name: jsonObject['name'] ?? '',
       phone: jsonObject['phone'] ?? '',
       clinicId: jsonObject['clinicId'] ?? '',

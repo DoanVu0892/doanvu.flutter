@@ -6,14 +6,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
+import 'package:flutter_app/blocs/dentist_bloc.dart';
 import 'package:flutter_app/blocs/login_bloc.dart';
+import 'package:flutter_app/blocs/platform_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/pushNotification.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/events/clinic_event.dart';
+import 'package:flutter_app/events/dentist_event.dart';
 import 'package:flutter_app/events/login_event.dart';
+import 'package:flutter_app/events/platform_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/repositories/app_repository.dart';
@@ -28,8 +32,9 @@ import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   final AppRepository appRepository;
+  final String tokenDevice;
 
-  LoginScreen({@required this.appRepository}) : assert(appRepository != null);
+  LoginScreen({@required this.appRepository, this.tokenDevice}) : assert(appRepository != null);
 
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
@@ -71,17 +76,17 @@ class _LoginScreenState extends State<LoginScreen>
         platform = 'iOS';
       });
     }
-    print("platform: $platform}");
+    print("platform: $platform");
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("onMessage: ${message.messageId} ${message.data['message']}");
+      print("onMessage: ${message.messageId}");
       setState(() {
         pushed = true;
       });
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       print(
-          "onMessageOpenedApp: ${message.notification} ${message.data['message']}");
+          "onMessageOpenedApp: ${message.notification} ");
       setState(() {
         pushed = true;
       });
@@ -169,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen>
                           keyboardType: TextInputType.phone,
                           style: const TextStyle(
                               fontFamily: 'WorkSansSemiBold',
-                              fontSize: 16.0,
+                              fontSize: 20.0,
                               color: Colors.black),
                           decoration: const InputDecoration(
                             border: InputBorder.none,
@@ -201,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen>
                           obscureText: _obscureTextPassword,
                           style: const TextStyle(
                               fontFamily: 'WorkSansSemiBold',
-                              fontSize: 16.0,
+                              fontSize: 20.0,
                               color: Colors.black),
                           decoration: InputDecoration(
                             border: InputBorder.none,
@@ -283,88 +288,75 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
 
-    return WillPopScope(
-      // onWillPop: () => showDialog<bool>(
-      //   context: context,
-      //   builder: (c) => AlertDialog(
-      //     title: Center(child: Text('Cảnh báo', style: TextStyle(color: Colors.redAccent),)),
-      //     content: Text('Bạn muốn thoát ứng dụng?'),
-      //     actions: [
-      //       // ignore: deprecated_member_use
-      //       FlatButton(
-      //         child: Text('Đồng ý',style: TextStyle(color: Colors.redAccent),),
-      //         onPressed: () => {Navigator.pop(c, true)},
-      //       ),
-      //       // ignore: deprecated_member_use
-      //       FlatButton(
-      //         child: Text('Không',style: TextStyle(color: Colors.blueAccent),),
-      //         onPressed: () => Navigator.pop(c, false),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.transparent,
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: <Color>[
-                    CustomTheme.loginGradientStart,
-                    CustomTheme.loginGradientEnd
-                  ],
-                  begin: FractionalOffset(0.0, 0.0),
-                  end: FractionalOffset(1.0, 1.0),
-                  stops: <double>[0.0, 1.0],
-                  tileMode: TileMode.clamp),
-            ),
-            child: Center(
-              child: SingleChildScrollView(
-                child: BlocConsumer<LoginBloc, LoginState>(
-                  listener: (context, loginState) {
-                    if (loginState is LoginStateSuccess) {
-                      //checkUser
-                      setState(() {
-                        user = loginState.response.data.user;
-                      });
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.transparent,
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                colors: <Color>[
+                  CustomTheme.loginGradientStart,
+                  CustomTheme.loginGradientEnd
+                ],
+                begin: FractionalOffset(0.0, 0.0),
+                end: FractionalOffset(1.0, 1.0),
+                stops: <double>[0.0, 1.0],
+                tileMode: TileMode.clamp),
+          ),
+          child: Center(
+            child: SingleChildScrollView(
+              child: BlocConsumer<LoginBloc, LoginState>(
+                listener: (context, loginState) async {
+                  if (loginState is LoginStateSuccess) {
+                    //checkUser
+                    setState(() {
+                      user = loginState.response.data.user;
+                    });
 
-                      if (loginState.response.data.user.userType == 'manager') {
-                        BlocProvider.of<ClinicBloc>(context)
-                            .add(ClinicEventRequested());
-                      } else {
-                        DateTime selectedDate = DateTime.now();
-                        final appointmentDate =
-                            formatDate(selectedDate, [yyyy, '-', mm, '-', dd]);
-                        BlocProvider.of<ScheduleBloc>(context).add(
-                            ScheduleEventRequested(
-                                dentistId:
-                                    loginState.response.data.user.dentistId,
-                                appointmentDate: appointmentDate,
-                                workShift: '1'));
-                      }
-                      Navigator.push(
-                          context, _createRoute(loginState.response.data.user));
-                    }
-                    if (loginState is LoginStateFailure) {
-                      _showSnackBar("Đăng nhập bị lỗi !!!", false);
-                    }
-                  },
-                  builder: (context, loginState) {
-                    if (loginState is LoginStateLoading) {
-                      return CircularProgress();
-                      // return CircularProgressIndicator(value: 10,);
+                    if(user != null){
+                     // BlocProvider.of<PlatformBloc>(context).add(
+                     //    PlatformEventRequested(token: widget.tokenDevice, patientId: user.id)
+                     //  );
+                     final response = await widget.appRepository.sendDeviceToken(widget.tokenDevice, '${user.id}');
+                     print("check: ${response.statusCode}");
                     }
 
-                    if (loginState is LoginStateFailure) {
-                      return viewLogin;
+                    if (loginState.response.data.user.userType == 'manager') {
+                      BlocProvider.of<DentistBloc>(context)
+                          .add(DentistEventRequested());
+                    } else {
+                      // DateTime selectedDate = DateTime.now();
+                      // final appointmentDate =
+                      //     formatDate(selectedDate, [yyyy, '-', mm, '-', dd]);
+                      // BlocProvider.of<ScheduleBloc>(context).add(
+                      //     ScheduleEventRequested(
+                      //         dentistId:
+                      //             loginState.response.data.user.dentistId,
+                      //         appointmentDate: appointmentDate,
+                      //         workShift: '1'));
                     }
+                    Navigator.push(
+                        context, _createRoute(loginState.response.data.user));
+                  }
+                  if (loginState is LoginStateFailure) {
+                    _showSnackBar("Đăng nhập bị lỗi !!!", false);
+                  }
+                },
+                builder: (context, loginState) {
+                  if (loginState is LoginStateLoading) {
+                    return CircularProgress();
+                    // return CircularProgressIndicator(value: 10,);
+                  }
+
+                  if (loginState is LoginStateFailure) {
                     return viewLogin;
-                  },
-                ),
+                  }
+                  return viewLogin;
+                },
               ),
             ),
           ),
@@ -376,7 +368,6 @@ class _LoginScreenState extends State<LoginScreen>
   Route _createRoute(User _user) {
     if (_user.userType == 'customer') {
       if (_user != null) {
-        print('pushed: $pushed');
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
               MainCustomerScreen(
@@ -393,7 +384,9 @@ class _LoginScreenState extends State<LoginScreen>
       }
     } else if (_user.userType == 'manager') {
       return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => MainScreen(appRepository: widget.appRepository,),
+        pageBuilder: (context, animation, secondaryAnimation) => MainScreen(
+          appRepository: widget.appRepository,
+        ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return child;
         },
@@ -427,10 +420,10 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _toggleSignInButton() {
-    if(loginPhoneController.text == null
-        || loginPhoneController.text.isEmpty
-        || loginPasswordController.text == null
-        || loginPasswordController.text.isEmpty){
+    if (loginPhoneController.text == null ||
+        loginPhoneController.text.isEmpty ||
+        loginPasswordController.text == null ||
+        loginPasswordController.text.isEmpty) {
       _showSnackBar("Vui lòng điền đầy đủ thông tin", false);
       return;
     }

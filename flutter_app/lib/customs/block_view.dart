@@ -17,7 +17,7 @@ import 'custom_circular_progress.dart';
 // ignore: must_be_immutable
 class BlockItem extends StatefulWidget {
   final Schedule schedule;
-  final String dentistId;
+  final int dentistId;
   final String appointmentDate;
 
   BlockItem({

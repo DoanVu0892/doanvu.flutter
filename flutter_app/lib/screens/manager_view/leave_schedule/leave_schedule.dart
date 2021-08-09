@@ -232,7 +232,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
           padding: EdgeInsets.all(16),
           child: Column(
             children: <Widget>[
-              Container(
+              /*Container(
                   padding: EdgeInsets.only(left: 22, right: 10),
                   margin: EdgeInsets.symmetric(vertical: 0, horizontal: 40),
                   decoration: const BoxDecoration(
@@ -271,10 +271,10 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                           this._clinic = data;
                         });
                         BlocProvider.of<DentistBloc>(context)
-                            .add(DentistEventRequested(clinicId: _clinic.id));
+                            .add(DentistEventRequested());
                       },
                     ),
-                  ))
+                  ))*/
             ],
           ),
         ),

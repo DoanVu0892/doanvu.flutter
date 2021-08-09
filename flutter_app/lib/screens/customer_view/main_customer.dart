@@ -2,14 +2,17 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/history_bloc.dart';
+import 'package:flutter_app/blocs/notify_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/events/history_event.dart';
+import 'package:flutter_app/events/notify_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/screens/customer_view/book_view.dart';
 import 'package:flutter_app/screens/customer_view/history_view.dart';
+import 'package:flutter_app/screens/customer_view/notify_customer_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// This is the stateful widget that the main application instantiates.
@@ -97,19 +100,28 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBin
     print('onTapItem');
     setState(() {
       _selectedIndex = index;
-      title = _selectedIndex == 0 ? 'Đặt lịch' : 'Lịch sử';
+      if(_selectedIndex == 0){
+        title = 'Đặt lịch';
+      }else if(_selectedIndex == 1){
+        title = 'Lịch sử';
+      }else if(_selectedIndex == 2){
+        title = 'Thông báo';
+      }
     });
   }
 
   Widget getBody( )  {
     if(this._selectedIndex == 0) {
       return BookView(user: widget.user);
-    } else if(this._selectedIndex==1) {
+    } else if(this._selectedIndex== 1) {
       BlocProvider.of<HistoryBloc>(context).add(
         HistoryEventRequested(patientId: widget.user.id)
       );
 
       return HistoryView(patientId: widget.user.id,);
+    }else if(this._selectedIndex == 2){
+      BlocProvider.of<NotifyBloc>(context).add(NotifyEventRequested(patientId: widget.user.id));
+      return NotifyCustomerView();
     }
   }
 
@@ -203,6 +215,10 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBin
               BottomNavigationBarItem(
                 icon: Icon(Icons.history),
                 label: 'Lịch sử',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications_active),
+                label: 'Thông báo',
               ),
             ],
             currentIndex: _selectedIndex,

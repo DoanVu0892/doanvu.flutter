@@ -9,7 +9,7 @@ abstract class LeaveScheduleEvent extends Equatable{
 }
 
 class LeaveScheduleEventRequested extends LeaveScheduleEvent{
-  final String dentistId;
+  final int dentistId;
   final String startDate;
   final String endDate;
   final String shiftWork;

@@ -7,6 +7,7 @@ import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/history_response.dart';
 import 'package:flutter_app/models/leave_schedule.dart';
+import 'package:flutter_app/models/notify.dart';
 import 'package:flutter_app/models/patient.dart';
 import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_app/models/schedule_add.dart';
@@ -24,7 +25,8 @@ final _addClinic = '$baseUrl/clinic/add';
 final _editClinic = (clinicId) => '$baseUrl/clinic/$clinicId/edit';
 final _delClinic = (clinicId) => '$baseUrl/clinic/$clinicId/delete';
 //dentist
-final _dentistUrl = (clinicId) => '$baseUrl/dentist/$clinicId/byClinic';
+// final _dentistUrl = (clinicId) => '$baseUrl/dentist/$clinicId/byClinic';
+final _dentistUrl = '$baseUrl/dentist/list';
 final _addDentistUrl = '$baseUrl/dentist/add';
 final _editDentistUrl = (dentistId) => '$baseUrl/dentist/$dentistId/edit';
 final _delDentistUrl = (dentistId) => '$baseUrl/dentist/$dentistId/delete';
@@ -40,6 +42,10 @@ final _patientSearchUrl =
 final _historyUrl = (patientId) => '$baseUrl/history/list?patientId=$patientId';
 final _checkLoginUrl = '$baseUrl/info';
 final _leaveScheduleUrl = '$baseUrl/leaveSchedule/add';
+final _deviceTokenUrl = '$baseUrl/device/add';
+final _addUserManagerUrl = '$baseUrl/user/add';
+final _getNotifyManager = '$baseUrl/notify/manager';
+final _getNotifyCustomer = (patientId) => '$baseUrl/notify/list?patienId=';
 
 class AppRepository {
   http.Client httpClient;
@@ -65,6 +71,21 @@ class AppRepository {
     } else {
       httpClient.close();
       throw Exception('Error Login of: $phoneNumber');
+    }
+  }
+
+  Future<http.Response> sendDeviceToken(String token, String patientId) async {
+    httpClient.close();
+    httpClient = new http.Client();
+    final response = await httpClient.post(_deviceTokenUrl,
+        body: {'token' : token, 'patientId' : patientId},
+        headers: {'Authorization': 'Bearer $accessToken',});
+    if (response.statusCode == 200){
+      httpClient.close();
+      return response;
+    }else{
+      httpClient.close();
+      return response;
     }
   }
 
@@ -124,7 +145,7 @@ class AppRepository {
   }
 
   Future<ClinicEditResponse> editClinic(
-      String clinicId, String name, String phone, String address) async {
+      int clinicId, String name, String phone, String address) async {
     httpClient = new http.Client();
     final response = await httpClient.put(_editClinic(clinicId),
         headers: {
@@ -147,7 +168,7 @@ class AppRepository {
     }
   }
 
-  Future<ClinicEditResponse> delClinic(String clinicId) async {
+  Future<ClinicEditResponse> delClinic(int clinicId) async {
     httpClient = new http.Client();
     print('del: ${_delClinic(clinicId)}');
     final response = await httpClient.put(_delClinic(clinicId),
@@ -168,23 +189,24 @@ class AppRepository {
 
   //
 
-  Future<DentistResponse> getDentist(String clinicId) async {
+  Future<DentistResponse> getDentist() async {
+    httpClient.close();
     httpClient = new http.Client();
-    print('url: ${_dentistUrl(clinicId)}');
-    final response = await httpClient.get(_dentistUrl(clinicId),
-        headers: {'Authorization': 'Bearer $accessToken'});
+    print('url: $_dentistUrl');
+    final response = await httpClient
+        .get(_dentistUrl, headers: {'Authorization': 'Bearer $accessToken'});
     if (response.statusCode == 200) {
       print('response ${response.body}');
       httpClient.close();
       return DentistResponse.fromJson(jsonDecode(response.body));
     } else {
       httpClient.close();
-      throw Exception('Error get Dentist of: $clinicId');
+      throw Exception('Error get Dentist of:');
     }
   }
 
   Future<BaseResponse> addDentist(
-      String clinicId, String name, String phone) async {
+      int clinicId, String name, String phone) async {
     httpClient = new http.Client();
     final response = await httpClient.post(_addDentistUrl,
         headers: {
@@ -204,7 +226,7 @@ class AppRepository {
   }
 
   Future<BaseResponse> editDentist(
-      String dentistId, String name, String phone) async {
+      int dentistId, String name, String phone) async {
     httpClient = new http.Client();
     final response = await httpClient.put(_editDentistUrl(dentistId),
         headers: {
@@ -223,7 +245,7 @@ class AppRepository {
     }
   }
 
-  Future<BaseResponse> delDentist(String dentistId) async {
+  Future<BaseResponse> delDentist(int dentistId) async {
     httpClient = new http.Client();
     final response = await httpClient.put(_delDentistUrl(dentistId),
         headers: {
@@ -245,7 +267,7 @@ class AppRepository {
   //schedule
 
   Future<ScheduleResponse> getScheduleList(
-      String dentistId, String appointmentDate, String workShift) async {
+      int dentistId, String appointmentDate, String workShift) async {
     httpClient = new http.Client();
     print('url: ${_scheduleUrl(dentistId, appointmentDate, workShift)}');
     final response = await httpClient.get(
@@ -262,9 +284,9 @@ class AppRepository {
   }
 
   Future<ScheduleAddResponse> addScheduleList(
-      String patientId,
+      int patientId,
       String patientName,
-      String dentistId,
+      int dentistId,
       String appointmentDate,
       String note,
       int blockId) async {
@@ -301,7 +323,7 @@ class AppRepository {
     }
   }
 
-  Future<ResLeaveSchedule> setLeaveSchedule(String dentistId, String startDate,
+  Future<ResLeaveSchedule> setLeaveSchedule(int dentistId, String startDate,
       String endDate, String shiftWork, String reason) async {
     httpClient = new http.Client();
     print(jsonEncode({
@@ -324,11 +346,11 @@ class AppRepository {
           'Accept': 'application/json',
           'Authorization': 'Bearer $accessToken'
         });
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       httpClient.close();
       print('rsponse: ${response.body}');
       return ResLeaveSchedule.fromJson(jsonDecode(response.body));
-    }else{
+    } else {
       throw Exception('Error set LeaveSchedule: $dentistId');
     }
   }
@@ -356,7 +378,7 @@ class AppRepository {
     }
   }
 
-  Future<PatientResponse> getPatients(String dentistId) async {
+  Future<PatientResponse> getPatients(int dentistId) async {
     httpClient = new http.Client();
     final response = await httpClient.get(_patientUrl(dentistId),
         headers: {'Authorization': 'Bearer $accessToken'});
@@ -385,7 +407,7 @@ class AppRepository {
     }
   }
 
-  Future<HistoryResponse> getHistory(String patientId) async {
+  Future<HistoryResponse> getHistory(int patientId) async {
     httpClient = new http.Client();
     final response = await httpClient.get(_historyUrl(patientId),
         headers: {'Authorization': 'Bearer $accessToken'});
@@ -396,6 +418,52 @@ class AppRepository {
     } else {
       httpClient.close();
       throw Exception('Error getHistory of: $patientId');
+    }
+  }
+
+  Future<BaseResponse> addUserManager(String phone, String password, String name, String clinicId) async {
+    httpClient.close();
+    httpClient = http.Client();
+    final response = await httpClient.post(_addUserManagerUrl, body:
+        {
+          'phone': phone,
+          'password': password,
+          'name': name,
+          'clinicId': clinicId,
+        }, headers: {'Authorization': 'Bearer $accessToken'});
+    if(response.statusCode == 200){
+      httpClient.close();
+      return BaseResponse.fromJson(jsonDecode(response.body));
+    }else{
+      httpClient.close();
+      throw Exception('add user manager failure!');
+    }
+  }
+  //notify
+
+  Future<ResponseNotify> getNotifyManager() async{
+    httpClient.close();
+    httpClient = http.Client();
+    final response = await httpClient.get(_getNotifyManager, headers: {'Authorization': 'Bearer $accessToken'});
+    if(response.statusCode == 200){
+      httpClient.close();
+      return ResponseNotify.fromJson(jsonDecode(response.body));
+    }else{
+      httpClient.close();
+      throw Exception('getNotify manager fail');
+    }
+  }
+
+  Future<ResponseNotify> getNotifyCustomer(String patientId) async{
+    httpClient.close();
+    httpClient = http.Client();
+    final response = await httpClient.get(_getNotifyCustomer(patientId), headers: {'Authorization': 'Bearer $accessToken'});
+    if(response.statusCode == 200){
+      httpClient.close();
+      return ResponseNotify.fromJson(jsonDecode(response.body));
+    }else{
+      httpClient.close();
+      throw Exception('getNotify customer fail');
     }
   }
 }

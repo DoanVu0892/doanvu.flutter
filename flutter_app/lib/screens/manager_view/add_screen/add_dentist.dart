@@ -7,7 +7,7 @@ import 'package:flutter_app/events/dentist_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddDentistScreen extends StatefulWidget {
-  final String clinicId;
+  final int clinicId;
 
   AddDentistScreen({this.clinicId});
 

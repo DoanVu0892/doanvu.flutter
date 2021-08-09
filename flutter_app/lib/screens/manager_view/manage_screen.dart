@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/blocs/add_manager_bloc.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/customs/utils.dart';
+import 'package:flutter_app/events/add_manager_event.dart';
 import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_app/events/dentist_event.dart';
 import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/screens/manager_view/add_screen/add_clinic.dart';
 import 'package:flutter_app/screens/manager_view/dentist_screen.dart';
+import 'package:flutter_app/states/add_manager_state.dart';
 import 'package:flutter_app/states/clinic_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ManageScreen extends StatefulWidget {
   @override
@@ -26,9 +30,19 @@ class _ManageScreenState extends State<ManageScreen> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController addressController = TextEditingController();
 
+  TextEditingController phoneNController = TextEditingController();
+  TextEditingController passWordController = TextEditingController();
+  TextEditingController managerNameController = TextEditingController();
+
+  FocusNode phoneNFocus = FocusNode();
+  FocusNode passFocus = FocusNode();
+  FocusNode nameNFocus = FocusNode();
+
   FocusNode nameFocus = FocusNode();
   FocusNode phoneFocus = FocusNode();
   FocusNode addressFocus = FocusNode();
+
+  bool _obscureTextPassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -47,38 +61,39 @@ class _ManageScreenState extends State<ManageScreen> {
                 child: Center(child: Icon(Icons.arrow_back_ios))),
           ),
         ),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: 10),
-            child: InkWell(
-              onTap: () async {
-                final shouldUpdate2 = await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => AddClinicScreen()));
-                setState(() {
-                  this.shouldUpdate = shouldUpdate2;
-                  if (shouldUpdate) {
-                    BlocProvider.of<ClinicBloc>(context).add(
-                      ClinicEventRequested(),
-                    );
-                  }
-                });
-              },
-              child: Container(
-                  width: 60,
-                  height: 30,
-                  child: Center(
-                      child: Icon(
-                    Icons.add,
-                    size: 35,
-                  ))),
-            ),
-          )
-        ],
+        // actions: [
+        //   Container(
+        //     margin: EdgeInsets.only(right: 10),
+        //     child: InkWell(
+        //       onTap: () async {
+        //         final shouldUpdate2 = await Navigator.of(context).push(
+        //             MaterialPageRoute(builder: (context) => AddClinicScreen()));
+        //         setState(() {
+        //           this.shouldUpdate = shouldUpdate2;
+        //           if (shouldUpdate) {
+        //             BlocProvider.of<ClinicBloc>(context).add(
+        //               ClinicEventRequested(),
+        //             );
+        //           }
+        //         });
+        //       },
+        //       child: Container(
+        //           width: 60,
+        //           height: 30,
+        //           child: Center(
+        //               child: Icon(
+        //             Icons.add,
+        //             size: 35,
+        //           ))),
+        //     ),
+        //   )
+        // ],
         backgroundColor: CustomTheme.loginGradientStart,
         title: Center(
           child: Container(
+            margin: EdgeInsets.only(right: 50),
             child: Text(
-              'Quản lý chi nhánh',
+              'Thêm mới Quản lý',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -140,59 +155,75 @@ class _ManageScreenState extends State<ManageScreen> {
             if (state is ClinicStateSuccess ||
                 state is ClinicEditStateSuccess ||
                 state is ClinicDelStateSuccess) {
-              return Container(
-                margin: EdgeInsets.all(10),
-                child: ListView.builder(
-                  physics: ScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: clinicList.length,
-                  itemBuilder: (context, index) {
-                    final clinic = clinicList[index];
-                    return Card(
-                      child: Slidable(
-                        actionPane: SlidableDrawerActionPane(),
-                        actionExtentRatio: 1 / 5,
-                        child: ListTile(
-                          leading: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: CustomTheme.loginGradientEnd),
-                              child: Icon(
-                                Icons.home,
-                                color: Colors.white,
-                              )),
-                          title: Text(clinic.name),
-                          subtitle: Text(clinic.address),
-                          onTap: () {
-                            BlocProvider.of<DentistBloc>(context).add(
-                                DentistEventRequested(clinicId: clinic.id));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        DentistScreen(clinicId: clinic.id)));
-                          },
-                        ),
-                        secondaryActions: <Widget>[
-                          new IconSlideAction(
-                            caption: 'Sửa',
-                            color: Colors.black45,
-                            icon: Icons.edit,
-                            onTap: () => {
-                              nameController.text = clinic.name,
-                              phoneController.text = clinic.phone,
-                              addressController.text = clinic.address,
+              return Column(
+                children: <Widget>[
+                  BlocConsumer<UserManagerBloc, UserManagerState>(listener: (context, state){
+                   if(state is UserManagerStateSuccess){
+                      _showSnackBar("Thêm thành công", true);
+                   }
+                   if(state is UserManagerStateFailure){
+                     _showSnackBar("Thêm không thành công", false);
+                   }
+
+                  },
+                  builder: (context, state){
+                    if(state is UserManagerStateLoading){
+                      return Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: CircularProgress());
+                    }
+                    return Text('');
+                  },),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text(
+                          'Chọn chi nhánh',
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        )),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    child: ListView.builder(
+                      physics: ScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: clinicList.length,
+                      itemBuilder: (context, index) {
+                        final clinic = clinicList[index];
+                        return Card(
+                          child: ListTile(
+                            leading: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: CustomTheme.loginGradientEnd),
+                                child: Icon(
+                                  Icons.home,
+                                  color: Colors.white,
+                                )),
+                            title: Text(clinic.name),
+                            subtitle: Text(clinic.address),
+                            onTap: () {
+                              // BlocProvider.of<DentistBloc>(context)
+                              //     .add(DentistEventRequested());
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) =>
+                              //             DentistScreen(clinicId: clinic.id)));
+                              //edit 08-08
+                              print('clinicId: ${clinic.id}');
                               DialogUtils.showCustomDialog(context,
-                                  title: 'Sửa thông tin chi nhánh',
+                                  title: 'Nhập thông tin',
                                   child: GestureDetector(
                                     onTap: () {
                                       FocusScope.of(context)
                                           .requestFocus(FocusNode());
                                     },
                                     child: Container(
-                                      height: 305,
+                                      height: 300,
                                       width: 300,
                                       padding: EdgeInsets.all(5),
                                       child: Column(
@@ -204,46 +235,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                                 children: [
                                                   Container(
                                                     margin: EdgeInsets.only(
-                                                        bottom: 5),
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Text(
-                                                      'Tên chi nhánh',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 18),
-                                                    ),
-                                                  ),
-                                                  TextField(
-                                                    maxLines: 1,
-                                                    decoration: InputDecoration(
-                                                      hintText: clinic.name,
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      labelStyle: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    controller: nameController,
-                                                    focusNode: nameFocus,
-                                                    onSubmitted: (_) {
-                                                      phoneFocus.requestFocus();
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Container(
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 5, top: 5),
+                                                        bottom: 4),
                                                     alignment:
                                                         Alignment.centerLeft,
                                                     child: Text(
@@ -256,10 +248,8 @@ class _ManageScreenState extends State<ManageScreen> {
                                                   ),
                                                   TextField(
                                                     maxLines: 1,
-                                                    keyboardType:
-                                                        TextInputType.phone,
                                                     decoration: InputDecoration(
-                                                      hintText: clinic.phone,
+                                                      hintText: 'Số điện thoại',
                                                       border:
                                                           OutlineInputBorder(),
                                                       labelStyle: TextStyle(
@@ -267,11 +257,13 @@ class _ManageScreenState extends State<ManageScreen> {
                                                           fontWeight:
                                                               FontWeight.bold),
                                                     ),
-                                                    controller: phoneController,
-                                                    focusNode: phoneFocus,
+                                                    controller:
+                                                        phoneNController,
+                                                    keyboardType:
+                                                        TextInputType.phone,
+                                                    focusNode: phoneNFocus,
                                                     onSubmitted: (_) {
-                                                      addressFocus
-                                                          .requestFocus();
+                                                      passFocus.requestFocus();
                                                     },
                                                   ),
                                                 ],
@@ -285,11 +277,68 @@ class _ManageScreenState extends State<ManageScreen> {
                                                 children: [
                                                   Container(
                                                     margin: EdgeInsets.only(
-                                                        bottom: 5, top: 5),
+                                                        bottom: 5, top: 4),
                                                     alignment:
                                                         Alignment.centerLeft,
                                                     child: Text(
-                                                      'Địa chỉ',
+                                                      'Mật khẩu',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 18),
+                                                    ),
+                                                  ),
+                                                  TextField(
+                                                    maxLines: 1,
+                                                    // obscureText: _obscureTextPassword,
+                                                    decoration: InputDecoration(
+                                                      hintText: "Mật khẩu",
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      labelStyle: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                      // suffixIcon: GestureDetector(
+                                                      //   onTap: (){
+                                                      //     print('onTap');
+                                                      //     setState(() {
+                                                      //       _obscureTextPassword = !_obscureTextPassword;
+                                                      //     });
+                                                      //   },
+                                                      //   child: Icon(
+                                                      //     _obscureTextPassword
+                                                      //         ? FontAwesomeIcons.eye
+                                                      //         : FontAwesomeIcons.eyeSlash,
+                                                      //     size: 15.0,
+                                                      //     color: Colors.black,
+                                                      //   ),
+                                                      // ),
+                                                    ),
+                                                    controller:
+                                                        passWordController,
+                                                    focusNode: passFocus,
+
+                                                    onSubmitted: (_) {
+                                                      nameNFocus.requestFocus();
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Container(
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 5, top: 4),
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      'Tên',
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -299,7 +348,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                                   TextField(
                                                     maxLines: 1,
                                                     decoration: InputDecoration(
-                                                      hintText: clinic.address,
+                                                      hintText: "Tên",
                                                       border:
                                                           OutlineInputBorder(),
                                                       labelStyle: TextStyle(
@@ -308,57 +357,252 @@ class _ManageScreenState extends State<ManageScreen> {
                                                               FontWeight.bold),
                                                     ),
                                                     controller:
-                                                        addressController,
-                                                    focusNode: addressFocus,
+                                                        managerNameController,
+                                                    focusNode: nameNFocus,
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                          )
+                                          ),
                                         ],
                                       ),
                                     ),
                                   ),
-                                  okBtnText: 'Lưu', okBtnFunction: () {
-                                BlocProvider.of<ClinicBloc>(context).add(
-                                    ClinicEditEventRequested(
-                                        clinicId: clinic.id,
-                                        name: nameController.text,
-                                        phone: phoneController.text,
-                                        address: addressController.text));
-                                Navigator.of(context).pop();
-                              })
+                                  okBtnText: 'Thêm', okBtnFunction: () {
+                                if (phoneNController.text == null ||
+                                    phoneNController.text == '' ||
+                                    passWordController.text == null ||
+                                    passWordController.text == '' ||
+                                    managerNameController.text == null ||
+                                    managerNameController.text == '') {
+                                  _showSnackBar(
+                                      'Vui lòng điền đầy đủ thông tin', false);
+                                  // phoneNController.text = '';
+                                  // passWordController.text = '';
+                                  // managerNameController.text = '';
+                                } else {
+                                  BlocProvider.of<UserManagerBloc>(context).add(
+                                      UserManagerEventRequested(
+                                          phone: phoneNController.text,
+                                          password: passWordController.text,
+                                          name: managerNameController.text,
+                                          clinicId: clinic.id));
+                                  Navigator.of(context).pop();
+                                }
+                              });
                             },
                           ),
-                          new IconSlideAction(
-                            caption: 'Xóa',
-                            color: Colors.red,
-                            icon: Icons.delete,
-                            onTap: () => {
-                              print('onDel'),
-                              DialogUtils.showCustomDialog(context,
-                                  title: 'Cảnh báo',
-                                  titleStyle: TextStyle(color: Colors.red),
-                                  child: Text(
-                                    'Bạn muốn xóa chi nhánh \'${clinic.name}\' khỏi danh sách?',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  okBtnText: 'Xóa', okBtnFunction: () {
-                                BlocProvider.of<ClinicBloc>(context).add(
-                                  ClinicDelEventRequested(clinicId: clinic.id),
-                                );
-                                Navigator.of(context).pop();
-                              })
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                          /*child: Slidable(
+                            actionPane: SlidableDrawerActionPane(),
+                            actionExtentRatio: 1 / 5,
+                            child: ListTile(
+                              leading: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      color: CustomTheme.loginGradientEnd),
+                                  child: Icon(
+                                    Icons.home,
+                                    color: Colors.white,
+                                  )),
+                              title: Text(clinic.name),
+                              subtitle: Text(clinic.address),
+                              onTap: () {
+                                BlocProvider.of<DentistBloc>(context)
+                                    .add(DentistEventRequested());
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            DentistScreen(clinicId: clinic.id)));
+                              },
+                            ),
+                            secondaryActions: <Widget>[
+                              new IconSlideAction(
+                                caption: 'Sửa',
+                                color: Colors.black45,
+                                icon: Icons.edit,
+                                onTap: () => {
+                                  nameController.text = clinic.name,
+                                  phoneController.text = clinic.phone,
+                                  addressController.text = clinic.address,
+                                  DialogUtils.showCustomDialog(context,
+                                      title: 'Sửa thông tin chi nhánh',
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                        },
+                                        child: Container(
+                                          height: 305,
+                                          width: 300,
+                                          padding: EdgeInsets.all(5),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 5),
+                                                        alignment:
+                                                            Alignment.centerLeft,
+                                                        child: Text(
+                                                          'Tên chi nhánh',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 18),
+                                                        ),
+                                                      ),
+                                                      TextField(
+                                                        maxLines: 1,
+                                                        decoration: InputDecoration(
+                                                          hintText: clinic.name,
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                          labelStyle: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight.bold),
+                                                        ),
+                                                        controller: nameController,
+                                                        focusNode: nameFocus,
+                                                        onSubmitted: (_) {
+                                                          phoneFocus.requestFocus();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 5, top: 5),
+                                                        alignment:
+                                                            Alignment.centerLeft,
+                                                        child: Text(
+                                                          'Số điện thoại',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 18),
+                                                        ),
+                                                      ),
+                                                      TextField(
+                                                        maxLines: 1,
+                                                        keyboardType:
+                                                            TextInputType.phone,
+                                                        decoration: InputDecoration(
+                                                          hintText: clinic.phone,
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                          labelStyle: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight.bold),
+                                                        ),
+                                                        controller: phoneController,
+                                                        focusNode: phoneFocus,
+                                                        onSubmitted: (_) {
+                                                          addressFocus
+                                                              .requestFocus();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 5, top: 5),
+                                                        alignment:
+                                                            Alignment.centerLeft,
+                                                        child: Text(
+                                                          'Địa chỉ',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 18),
+                                                        ),
+                                                      ),
+                                                      TextField(
+                                                        maxLines: 1,
+                                                        decoration: InputDecoration(
+                                                          hintText: clinic.address,
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                          labelStyle: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight.bold),
+                                                        ),
+                                                        controller:
+                                                            addressController,
+                                                        focusNode: addressFocus,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      okBtnText: 'Lưu', okBtnFunction: () {
+                                    BlocProvider.of<ClinicBloc>(context).add(
+                                        ClinicEditEventRequested(
+                                            clinicId: clinic.id,
+                                            name: nameController.text,
+                                            phone: phoneController.text,
+                                            address: addressController.text));
+                                    Navigator.of(context).pop();
+                                  })
+                                },
+                              ),
+                              new IconSlideAction(
+                                caption: 'Xóa',
+                                color: Colors.red,
+                                icon: Icons.delete,
+                                onTap: () => {
+                                  print('onDel'),
+                                  DialogUtils.showCustomDialog(context,
+                                      title: 'Cảnh báo',
+                                      titleStyle: TextStyle(color: Colors.red),
+                                      child: Text(
+                                        'Bạn muốn xóa chi nhánh \'${clinic.name}\' khỏi danh sách?',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w400),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      okBtnText: 'Xóa', okBtnFunction: () {
+                                    BlocProvider.of<ClinicBloc>(context).add(
+                                      ClinicDelEventRequested(clinicId: clinic.id),
+                                    );
+                                    Navigator.of(context).pop();
+                                  })
+                                },
+                              ),
+                            ],
+                          ),*/
+                        );
+                      },
+                    ),
+                  ),
+                ],
               );
             }
 
@@ -425,13 +669,17 @@ class _ManageScreenState extends State<ManageScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(success ? Icons.done : Icons.warning_amber_outlined, color: success ? Colors.green : Colors.red,),
+            Icon(
+              success ? Icons.done : Icons.warning_amber_outlined,
+              color: success ? Colors.green : Colors.red,
+            ),
             SizedBox(
               width: 20,
             ),
             Text(
               msg,
-              style: TextStyle(color: success ? Colors.green : Colors.red, fontSize: 18),
+              style: TextStyle(
+                  color: success ? Colors.green : Colors.red, fontSize: 18),
             )
           ],
         ));

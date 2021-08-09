@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class DentistScreen extends StatefulWidget {
-  final String clinicId;
+  final int clinicId;
 
   DentistScreen({@required this.clinicId}) : assert(clinicId != null);
 
@@ -62,7 +62,7 @@ class _DentistScreenState extends State<DentistScreen> {
                   this.shouldUpdate = shouldUpdate2;
                   if (shouldUpdate) {
                     BlocProvider.of<DentistBloc>(context).add(
-                      DentistEventRequested(clinicId: widget.clinicId),
+                      DentistEventRequested(),
                     );
                   }
                 });
@@ -122,12 +122,12 @@ class _DentistScreenState extends State<DentistScreen> {
               }
             } else if (state is DentistEditStateSuccess) {
               BlocProvider.of<DentistBloc>(context).add(
-                DentistEventRequested(clinicId: widget.clinicId),
+                DentistEventRequested(),
               );
               _showSnackBar('Sửa nha sỹ thành công', true);
             } else if (state is DentistDelStateSuccess) {
               BlocProvider.of<DentistBloc>(context).add(
-                DentistEventRequested(clinicId: widget.clinicId),
+                DentistEventRequested(),
               );
               _showSnackBar('Xóa nha sỹ thành công', true);
             }
@@ -175,7 +175,7 @@ class _DentistScreenState extends State<DentistScreen> {
                               nameController.text = dentist.name,
                               phoneController.text = dentist.phone,
                               DialogUtils.showCustomDialog(context,
-                                  title: 'Sửa thông tin chi nhánh',
+                                  title: 'Sửa thông tin dentist',
                                   child: GestureDetector(
                                     onTap: () {
                                       FocusScope.of(context)
@@ -357,7 +357,7 @@ class _DentistScreenState extends State<DentistScreen> {
                   ),
                   onPressed: () {
                     BlocProvider.of<DentistBloc>(context).add(
-                      DentistEventRequested(clinicId: widget.clinicId),
+                      DentistEventRequested(),
                     );
                   },
                 ),
@@ -375,13 +375,17 @@ class _DentistScreenState extends State<DentistScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(success ? Icons.done : Icons.warning_amber_outlined, color: success ? Colors.green : Colors.red,),
+            Icon(
+              success ? Icons.done : Icons.warning_amber_outlined,
+              color: success ? Colors.green : Colors.red,
+            ),
             SizedBox(
               width: 20,
             ),
             Text(
               msg,
-              style: TextStyle(color: success ? Colors.green : Colors.red, fontSize: 18),
+              style: TextStyle(
+                  color: success ? Colors.green : Colors.red, fontSize: 18),
             )
           ],
         ));

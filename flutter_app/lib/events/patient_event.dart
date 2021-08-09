@@ -5,7 +5,7 @@ abstract class PatientEvent extends Equatable{
 }
 
 class PatientEventRequested extends PatientEvent{
-  final String dentistId;
+  final int dentistId;
   PatientEventRequested({this.dentistId}) : assert (dentistId != null);
   @override
   // TODO: implement props

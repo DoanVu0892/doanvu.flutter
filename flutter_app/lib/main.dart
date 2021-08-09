@@ -1,12 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/blocs/add_manager_bloc.dart';
 import 'package:flutter_app/blocs/bloc_observer.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
 import 'package:flutter_app/blocs/history_bloc.dart';
 import 'package:flutter_app/blocs/leave_schedule_bloc.dart';
 import 'package:flutter_app/blocs/login_bloc.dart';
+import 'package:flutter_app/blocs/notify_bloc.dart';
 import 'package:flutter_app/blocs/patient_bloc.dart';
+import 'package:flutter_app/blocs/platform_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/pushNotification.dart';
 import 'package:flutter_app/repositories/app_repository.dart';
@@ -25,6 +28,12 @@ Future<void> main() async {
       providers: [
         BlocProvider<LeaveScheduleBloc>(
             create: (context) => LeaveScheduleBloc(appRepository: appRepository)),
+        BlocProvider<UserManagerBloc>(
+            create: (context) => UserManagerBloc(appRepository: appRepository)),
+        BlocProvider<NotifyBloc>(
+            create: (context) => NotifyBloc(appRepository: appRepository)),
+        BlocProvider<PlatformBloc>(
+            create: (context) => PlatformBloc(appRepository: appRepository)),
         BlocProvider<LoginBloc>(
             create: (context) => LoginBloc(appRepository: appRepository)),
         BlocProvider<ScheduleBloc>(
@@ -57,12 +66,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   FirebaseNotification firebase;
   bool pushed = false;
+  String tokenDevice = '';
 
   handleAsync() async {
     await firebase.initialize();
 
     String token = await firebase.getToken();
     print("Firebase token : $token");
+    setState(() {
+      tokenDevice = token;
+    });
   }
 
   @override
@@ -87,10 +100,10 @@ Widget build(BuildContext context) {
       title: 'Dential',
       home: BlocProvider(
         create: (context) => LoginBloc(appRepository: widget.appRepository),
-        child: LoginScreen(appRepository: widget.appRepository,),
+        child: LoginScreen(appRepository: widget.appRepository, tokenDevice: tokenDevice,),
       ),
       routes: {
-        "/login" : (BuildContext context) => new LoginScreen(appRepository: widget.appRepository),
+        "/login" : (BuildContext context) => new LoginScreen(appRepository: widget.appRepository, tokenDevice: tokenDevice,),
       },
     ),
   );
