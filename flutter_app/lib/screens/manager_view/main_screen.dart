@@ -309,7 +309,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         Container(
           child: Center(
             child: Text(
-              'Lịch khám của ${_dentist.name}',
+              'Lịch khám của bác sỹ ${_dentist.name}',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

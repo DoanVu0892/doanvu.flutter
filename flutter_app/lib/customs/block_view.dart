@@ -44,13 +44,13 @@ class _BlockItemState extends State<BlockItem> {
   Widget build(BuildContext context) {
     if (widget.schedule.booked == 'booked') {
       colorItem = Colors.red;
-      title = 'Đã đặt\n ${widget.schedule.block.patientName}';
+      title = 'Đã đặt\n ${widget.schedule.block.patientId}';
     } else if (widget.schedule.booked == 'available') {
       colorItem = Colors.green;
-      title = 'Thời gian: ${widget.schedule.time}';
+      title = '${widget.schedule.time}';
     } else if (widget.schedule.booked == 'none') {
       colorItem = Colors.grey;
-      title = 'Thời gian: ${widget.schedule.time} \nNghỉ khám';
+      title = '${widget.schedule.time} \nNghỉ khám';
     }
 
     return GestureDetector(

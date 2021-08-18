@@ -46,6 +46,7 @@ final _deviceTokenUrl = '$baseUrl/device/add';
 final _addUserManagerUrl = '$baseUrl/user/add';
 final _getNotifyManager = '$baseUrl/notify/manager';
 final _getNotifyCustomer = (patientId) => '$baseUrl/notify/list?patienId=';
+final _updateDentist = '$baseUrl/dentist/updateClinic';
 
 class AppRepository {
   http.Client httpClient;
@@ -77,13 +78,16 @@ class AppRepository {
   Future<http.Response> sendDeviceToken(String token, String patientId) async {
     httpClient.close();
     httpClient = new http.Client();
-    final response = await httpClient.post(_deviceTokenUrl,
-        body: {'token' : token, 'patientId' : patientId},
-        headers: {'Authorization': 'Bearer $accessToken',});
-    if (response.statusCode == 200){
+    final response = await httpClient.post(_deviceTokenUrl, body: {
+      'token': token,
+      'patientId': patientId
+    }, headers: {
+      'Authorization': 'Bearer $accessToken',
+    });
+    if (response.statusCode == 200) {
       httpClient.close();
       return response;
-    }else{
+    } else {
       httpClient.close();
       return response;
     }
@@ -283,13 +287,8 @@ class AppRepository {
     }
   }
 
-  Future<ScheduleAddResponse> addScheduleList(
-      int patientId,
-      String patientName,
-      int dentistId,
-      String appointmentDate,
-      String note,
-      int blockId) async {
+  Future<ScheduleAddResponse> addScheduleList(int patientId, String patientName,
+      int dentistId, String appointmentDate, String note, int blockId) async {
     httpClient = new http.Client();
     print('send: ${jsonEncode({
           'patientId': patientId,
@@ -319,7 +318,7 @@ class AppRepository {
       return ScheduleAddResponse.fromJson(jsonDecode(response.body));
     } else {
       httpClient.close();
-      throw Exception('Error add Schedule with: $patientId}');
+      throw Exception('Error add Schedule with: $patientId');
     }
   }
 
@@ -374,7 +373,7 @@ class AppRepository {
     } else {
       print('response ${response.body} ${response.statusCode}');
       httpClient.close();
-      throw Exception('Error cancel Schedule with: $reason}');
+      throw Exception('Error cancel Schedule with: $reason');
     }
   }
 
@@ -421,49 +420,74 @@ class AppRepository {
     }
   }
 
-  Future<BaseResponse> addUserManager(String phone, String password, String name, String clinicId) async {
+  Future<BaseResponse> addUserManager(
+      String phone, String password, String name, String clinicId) async {
     httpClient.close();
     httpClient = http.Client();
-    final response = await httpClient.post(_addUserManagerUrl, body:
-        {
-          'phone': phone,
-          'password': password,
-          'name': name,
-          'clinicId': clinicId,
-        }, headers: {'Authorization': 'Bearer $accessToken'});
-    if(response.statusCode == 200){
+    final response = await httpClient.post(_addUserManagerUrl, body: {
+      'phone': phone,
+      'password': password,
+      'name': name,
+      'clinicId': clinicId,
+    }, headers: {
+      'Authorization': 'Bearer $accessToken'
+    });
+    if (response.statusCode == 200) {
       httpClient.close();
       return BaseResponse.fromJson(jsonDecode(response.body));
-    }else{
+    } else {
       httpClient.close();
       throw Exception('add user manager failure!');
     }
   }
+
   //notify
 
-  Future<ResponseNotify> getNotifyManager() async{
+  Future<ResponseNotify> getNotifyManager() async {
     httpClient.close();
     httpClient = http.Client();
-    final response = await httpClient.get(_getNotifyManager, headers: {'Authorization': 'Bearer $accessToken'});
-    if(response.statusCode == 200){
+    final response = await httpClient.get(_getNotifyManager,
+        headers: {'Authorization': 'Bearer $accessToken'});
+    if (response.statusCode == 200) {
       httpClient.close();
       return ResponseNotify.fromJson(jsonDecode(response.body));
-    }else{
+    } else {
       httpClient.close();
       throw Exception('getNotify manager fail');
     }
   }
 
-  Future<ResponseNotify> getNotifyCustomer(String patientId) async{
+  Future<ResponseNotify> getNotifyCustomer(String patientId) async {
     httpClient.close();
     httpClient = http.Client();
-    final response = await httpClient.get(_getNotifyCustomer(patientId), headers: {'Authorization': 'Bearer $accessToken'});
-    if(response.statusCode == 200){
+    final response = await httpClient.get(_getNotifyCustomer(patientId),
+        headers: {'Authorization': 'Bearer $accessToken'});
+    if (response.statusCode == 200) {
       httpClient.close();
       return ResponseNotify.fromJson(jsonDecode(response.body));
-    }else{
+    } else {
       httpClient.close();
       throw Exception('getNotify customer fail');
+    }
+  }
+
+  //update dentist with clinicId
+
+  Future<BaseResponse> updateDentistWithClinicId(
+      String dentistId, String clinicId) async {
+    httpClient.close();
+    httpClient = http.Client();
+    final response = await httpClient.put(_updateDentist, body: jsonEncode(
+        {
+          'dentistId' : dentistId,
+          'clinicId' : clinicId,
+        }), headers: {'Authorization': 'Bearer $accessToken'});
+    if(response.statusCode == 200){
+      httpClient.close();
+      return BaseResponse.fromJson(jsonDecode(response.body));
+    }else{
+      httpClient.close();
+      throw Exception('update Dentist failure');
     }
   }
 }

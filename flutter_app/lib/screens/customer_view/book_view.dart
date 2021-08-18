@@ -110,10 +110,10 @@ class _BookViewState extends State<BookView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Container(
+        /*Container(
           child: Center(
             child: Text(
-              'Lịch khám của ${widget.user.dentistName}',
+              'Lịch khám của bác sỹ ${widget.user.dentistName}',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -121,13 +121,16 @@ class _BookViewState extends State<BookView> {
             ),
           ),
           margin: EdgeInsets.only(top: 20, bottom: 10),
-        ),
-        Divider(
-          indent: 10,
-          endIndent: 10,
-          thickness: 2,
-          color: Colors.grey,
-          height: 0.0,
+        ),*/
+        Container(
+          margin: EdgeInsets.only(top: 20, bottom: 10),
+          child: Divider(
+            indent: 10,
+            endIndent: 10,
+            thickness: 2,
+            color: Colors.grey,
+            height: 0.0,
+          ),
         ),
         Expanded(
           child: Container(
@@ -216,7 +219,7 @@ class _BookViewState extends State<BookView> {
 
   Widget _header(BuildContext context) {
     return Container(
-      height: 280,
+      height: 230,
       child: Column(
         children: <Widget>[
           Container(
@@ -224,7 +227,7 @@ class _BookViewState extends State<BookView> {
             margin: EdgeInsets.only(left: 40, top: 20, right: 40),
             child: Column(
               children: [
-                Container(
+                /*Container(
                   alignment: Alignment.centerLeft,
                   margin: EdgeInsets.all(10),
                   child: Column(
@@ -255,7 +258,7 @@ class _BookViewState extends State<BookView> {
                   width: 250.0,
                   height: 1.0,
                   color: Colors.grey[400],
-                ),
+                ),*/
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: EdgeInsets.all(10),

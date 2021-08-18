@@ -98,6 +98,7 @@ class _LoginScreenState extends State<LoginScreen>
       ..addListener(() {
         setState(() {});
       });
+    print(_animation.value);
 
     myFocusNodePhoneLogin.addListener(() {
       if (myFocusNodePhoneLogin.hasFocus) {
@@ -132,13 +133,13 @@ class _LoginScreenState extends State<LoginScreen>
             stops: <double>[0.0, 1.0],
             tileMode: TileMode.clamp),
       ),
-      padding: EdgeInsets.only(top: _animation.value),
+      // margin: EdgeInsets.only(top: _animation.value),
       child: Column(
         // mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           SizedBox(height: _animation.value),
           Padding(
-            padding: const EdgeInsets.only(top: 75.0),
+            padding: EdgeInsets.only(top: _animation.value + 30),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Image(
