@@ -25,6 +25,7 @@ class DentistStateSuccess extends DentistState {
   // TODO: implement props
   List<Object> get props => [response];
 }
+
 class DentistAddStateSuccess extends DentistState {
   final BaseResponse response;
 
@@ -58,5 +59,13 @@ class DentistDelStateSuccess extends DentistState {
   List<Object> get props => [response];
 }
 
+class DentistStateFailure extends DentistState {
+  final DentistResponse response;
 
-class DentistStateFailure extends DentistState {}
+  const DentistStateFailure({@required this.response})
+      : assert(response != null);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [response];
+}

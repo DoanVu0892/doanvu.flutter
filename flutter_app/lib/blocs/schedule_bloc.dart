@@ -19,44 +19,46 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     if (scheduleEvent is ScheduleEventRequested) {
       yield ScheduleStateLoading();
       try {
-        final ScheduleResponse response = await new Future.delayed(const Duration(milliseconds: Constant.duration), (){
-          return appRepository.getScheduleList(
-              scheduleEvent.dentistId, scheduleEvent.appointmentDate,
-              scheduleEvent.workShift);
+        final ScheduleResponse response = await new Future.delayed(
+            const Duration(milliseconds: Constant.duration), () {
+          return appRepository.getScheduleList(scheduleEvent.dentistId,
+              scheduleEvent.appointmentDate, scheduleEvent.workShift);
         });
         yield ScheduleStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
         yield ScheduleStateFailure();
       }
-    }else if (scheduleEvent is ScheduleAddEventRequested) {
+    } else if (scheduleEvent is ScheduleAddEventRequested) {
       yield ScheduleStateLoading();
       try {
         final ScheduleAddResponse response =
-        await appRepository.addScheduleList(
-            scheduleEvent.patientId,
-            scheduleEvent.patientName,
-            scheduleEvent.dentistId,
-            scheduleEvent.appointmentDate,
-            scheduleEvent.note,
-            scheduleEvent.blockId);
+            await appRepository.addScheduleList(
+                scheduleEvent.patientId,
+                scheduleEvent.patientName,
+                scheduleEvent.dentistId,
+                scheduleEvent.appointmentDate,
+                scheduleEvent.note,
+                scheduleEvent.blockId,
+                scheduleEvent.clinicId);
         yield ScheduleAddStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
         yield ScheduleAddStateFailure();
       }
-    }else if(scheduleEvent is ScheduleDelEventRequested){
+    } else if (scheduleEvent is ScheduleDelEventRequested) {
       yield ScheduleStateLoading();
-      try{
-        final ScheduleDelResponse response = await new Future.delayed(const Duration(milliseconds: Constant.duration), (){
-          return appRepository.cancelBook(scheduleEvent.bookedId, scheduleEvent.reason);
+      try {
+        final ScheduleDelResponse response = await new Future.delayed(
+            const Duration(milliseconds: Constant.duration), () {
+          return appRepository.cancelBook(
+              scheduleEvent.bookedId, scheduleEvent.reason);
         });
         yield ScheduleDelStateSuccess(response: response);
-      }catch(exception){
+      } catch (exception) {
         print('ex: $exception');
         yield ScheduleDelStateFailure();
       }
     }
   }
-
 }

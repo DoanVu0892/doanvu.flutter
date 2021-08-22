@@ -23,6 +23,7 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
   // List<DentistData> dentistData = [];
   List<Work> listWork = [];
   ResponseUpdateDentist response;
+  List<Work> futureListWork = [];
   List<bool> _isCheckCS1;
   List<bool> _isCheckCS2;
   Map<String, dynamic> myDentist;
@@ -84,7 +85,7 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
                   listMyDentist.add(myDentist);
                 }
                 print(listMyDentist);
-                if (appointmentDate != null) {
+                if (appointmentDate != null && appointmentDate != '') {
                   BlocProvider.of<UpdateDentistWithClinicBloc>(context).add(
                       UpdateDentistWithClinicEventRequested(
                           date: appointmentDate, listUpdate: listMyDentist));
@@ -169,6 +170,8 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
                                 response = state.response;
                                 listWork =
                                     response.updateData.presentUpdate.listWork;
+                                futureListWork =
+                                    response.updateData.futureUpdate.listWork;
                                 _isCheckCS1 = List.generate(
                                     listWork.length, (index) => false);
                                 _isCheckCS2 = List.generate(
@@ -392,17 +395,19 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
   Text _getText(int cs) {
     if (cs == 1) {
       var listCS1 = '';
-      for (int i = 0; i < listWork.length; i++) {
-        listCS1 +=
-            listWork[i].clinicId == 1 ? '${listWork[i].dentistName}, ' : '';
+      for (int i = 0; i < futureListWork.length; i++) {
+        listCS1 += futureListWork[i].clinicId == 1
+            ? '${futureListWork[i].dentistName}, '
+            : '';
       }
       return Text(' $listCS1',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500));
     } else if (cs == 2) {
       var listCS2 = '';
-      for (int i = 0; i < listWork.length; i++) {
-        listCS2 +=
-            listWork[i].clinicId == 2 ? '${listWork[i].dentistName}, ' : '';
+      for (int i = 0; i < futureListWork.length; i++) {
+        listCS2 += futureListWork[i].clinicId == 2
+            ? '${futureListWork[i].dentistName}, '
+            : '';
       }
       return Text(' $listCS2',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500));
@@ -431,13 +436,13 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
         ));
   }
 
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now().add(Duration(days: 1));
   String title = 'Chọn ngày';
   String appointmentDate;
 
   bool _decideWhichDayToEnable(DateTime day) {
-    if ((day.isAfter(DateTime.now().subtract(Duration(days: 1))) &&
-        day.isBefore(DateTime.now().add(Duration(days: 10))))) {
+    // ignore: unrelated_type_equality_checks
+    if (day.isAfter(DateTime.now().subtract(Duration(days: 1)))) {
       return true;
     }
     return false;
@@ -450,15 +455,24 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
       initialDate: selectedDate,
       firstDate: DateTime(2021),
       lastDate: DateTime(2050),
-      // selectableDayPredicate: _decideWhichDayToEnable,
+      selectableDayPredicate: _decideWhichDayToEnable,
       errorFormatText: 'nhập sai định dạng',
       errorInvalidText: 'nhập sai',
     );
-    if (picked != null)
-      setState(() {
-        selectedDate = picked;
-        title = formatDate(selectedDate, [dd, '-', mm, '-', yyyy]);
-        appointmentDate = formatDate(selectedDate, [yyyy, '-', mm, '-', dd]);
-      });
+    if (picked != null) {
+      DateTime now = new DateTime.now();
+      print('$picked === ${DateTime(now.year, now.month, now.day)}');
+      if (picked == DateTime(now.year, now.month, now.day)) {
+        _showSnackBar('Bạn không được chọn ngày hiện tại', false);
+        selectedDate = DateTime.now().add(Duration(days: 1));
+        appointmentDate = '';
+      } else {
+        setState(() {
+          selectedDate = picked;
+          title = formatDate(selectedDate, [dd, '-', mm, '-', yyyy]);
+          appointmentDate = formatDate(selectedDate, [yyyy, '-', mm, '-', dd]);
+        });
+      }
+    }
   }
 }

@@ -25,6 +25,7 @@ class ScheduleAddEventRequested extends ScheduleEvent {
   final String appointmentDate;
   final String note;
   final int blockId;
+  final int clinicId;
 
   const ScheduleAddEventRequested(
       {@required this.patientId,
@@ -32,7 +33,8 @@ class ScheduleAddEventRequested extends ScheduleEvent {
       this.dentistId,
       this.appointmentDate,
       this.note,
-      this.blockId});
+      this.blockId,
+      this.clinicId});
 
   @override
   // TODO: implement props

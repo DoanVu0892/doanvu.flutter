@@ -203,6 +203,7 @@ class _BookViewState extends State<BookView> {
                       children: scheduleList
                           .map((item) => BlockCSItem(
                                 dentistId: widget.user.dentistId,
+                                clinicId: widget.user.clinicId,
                                 schedule: item,
                                 patientId: widget.user.id,
                                 patientName: widget.user.name,

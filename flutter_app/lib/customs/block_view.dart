@@ -153,6 +153,7 @@ class _BlockItemState extends State<BlockItem> {
                               ScheduleAddEventRequested(
                                   patientId: _patient.id,
                                   patientName: _patient.name,
+                                  clinicId: _patient.clinicId,
                                   dentistId: widget.dentistId,
                                   appointmentDate: widget.appointmentDate,
                                   note: noteController.text,

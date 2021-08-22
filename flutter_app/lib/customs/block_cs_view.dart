@@ -14,6 +14,7 @@ class BlockCSItem extends StatefulWidget {
   final String appointmentDate;
   final String patientName;
   final int patientId;
+  final int clinicId;
   final VoidCallback onChange;
 
   BlockCSItem(
@@ -21,6 +22,7 @@ class BlockCSItem extends StatefulWidget {
       this.dentistId,
       this.appointmentDate,
       this.patientId,
+      this.clinicId,
       this.patientName,
       this.onChange})
       : assert(dentistId != null);
@@ -86,6 +88,7 @@ class _BlockCSItemState extends State<BlockCSItem> {
                           BlocProvider.of<ScheduleBloc>(context).add(
                               ScheduleAddEventRequested(
                                   patientId: widget.patientId,
+                                  clinicId: widget.clinicId,
                                   patientName: widget.patientName,
                                   dentistId: widget.dentistId,
                                   appointmentDate: widget.appointmentDate,

@@ -911,8 +911,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   String title = 'Chọn ngày';
 
   bool _decideWhichDayToEnable(DateTime day) {
-    if ((day.isAfter(DateTime.now().subtract(Duration(days: 1))) &&
-        day.isBefore(DateTime.now().add(Duration(days: 10))))) {
+    if (day.isAfter(DateTime.now().subtract(Duration(days: 1)))) {
       return true;
     }
     return false;
@@ -925,7 +924,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       initialDate: selectedDate,
       firstDate: DateTime(2021),
       lastDate: DateTime(2050),
-      // selectableDayPredicate: _decideWhichDayToEnable,
+      selectableDayPredicate: _decideWhichDayToEnable,
       errorFormatText: 'nhập sai định dạng',
       errorInvalidText: 'nhập sai',
     );

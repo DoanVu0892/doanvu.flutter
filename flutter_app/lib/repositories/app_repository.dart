@@ -291,8 +291,14 @@ class AppRepository {
     }
   }
 
-  Future<ScheduleAddResponse> addScheduleList(int patientId, String patientName,
-      int dentistId, String appointmentDate, String note, int blockId) async {
+  Future<ScheduleAddResponse> addScheduleList(
+      int patientId,
+      String patientName,
+      int dentistId,
+      String appointmentDate,
+      String note,
+      int blockId,
+      int clinicId) async {
     httpClient = new http.Client();
     print('send: ${jsonEncode({
           'patientId': patientId,
@@ -300,7 +306,8 @@ class AppRepository {
           'dentistId': dentistId,
           'appointmentDate': appointmentDate,
           'note': note,
-          'blockId': blockId
+          'blockId': blockId,
+          'clinicId': clinicId,
         })}');
     final response = await httpClient.post(_addScheduleUrl,
         body: jsonEncode({
@@ -309,7 +316,8 @@ class AppRepository {
           'dentistId': dentistId,
           'appointmentDate': appointmentDate,
           'note': note,
-          'blockId': blockId
+          'blockId': blockId,
+          'clinicId': clinicId,
         }),
         headers: <String, String>{
           'Content-Type': 'application/json',

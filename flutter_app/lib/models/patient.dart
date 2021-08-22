@@ -5,10 +5,10 @@ class Patient extends Equatable {
   final String name;
   final String phone;
   final int dentistId;
-  // final int clinicId;
+  final int clinicId;
 
   const Patient(
-      {this.id, this.name, this.dentistId, this.phone});
+      {this.id, this.name, this.dentistId, this.phone, this.clinicId});
 
   @override
   // TODO: implement props
@@ -20,7 +20,7 @@ class Patient extends Equatable {
       name: jsonObject['name'] ?? '',
       phone: jsonObject['phone'] ?? '',
       dentistId: jsonObject['dentistId'] ?? 0,
-      // clinicId: jsonObject['clinicId'] ?? 0,
+      clinicId: jsonObject['clinicId'] ?? 0,
     );
   }
 
@@ -46,6 +46,7 @@ class PatientResponse extends Equatable {
   factory PatientResponse.fromJson(dynamic jsonObject) {
     var list = jsonObject['data'] as List;
     List<Patient> dataList = list.map((i) => Patient.fromJson(i)).toList();
+    print('patientList: $dataList');
 
     return PatientResponse(
       status: jsonObject['status'] ?? '',
