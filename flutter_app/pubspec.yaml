@@ -46,6 +46,8 @@ dependencies:
 
   flutter_local_notifications: ^6.0.0
   overlay_support: ^1.2.1
+  alert: ^2.0.1
+  oktoast: ^3.0.0
 
 dev_dependencies:
   flutter_test:

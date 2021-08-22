@@ -56,7 +56,7 @@ class _BlockCSItemState extends State<BlockCSItem> {
           child: Center(
             child: Text(
               title,
-              style: TextStyle(fontSize: 18, color: Colors.white),
+              style: TextStyle(fontSize: 15, color: Colors.white),
               textAlign: TextAlign.center,
             ),
           ),

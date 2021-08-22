@@ -61,33 +61,6 @@ class _ManageScreenState extends State<ManageScreen> {
                 child: Center(child: Icon(Icons.arrow_back_ios))),
           ),
         ),
-        // actions: [
-        //   Container(
-        //     margin: EdgeInsets.only(right: 10),
-        //     child: InkWell(
-        //       onTap: () async {
-        //         final shouldUpdate2 = await Navigator.of(context).push(
-        //             MaterialPageRoute(builder: (context) => AddClinicScreen()));
-        //         setState(() {
-        //           this.shouldUpdate = shouldUpdate2;
-        //           if (shouldUpdate) {
-        //             BlocProvider.of<ClinicBloc>(context).add(
-        //               ClinicEventRequested(),
-        //             );
-        //           }
-        //         });
-        //       },
-        //       child: Container(
-        //           width: 60,
-        //           height: 30,
-        //           child: Center(
-        //               child: Icon(
-        //             Icons.add,
-        //             size: 35,
-        //           ))),
-        //     ),
-        //   )
-        // ],
         backgroundColor: CustomTheme.loginGradientStart,
         title: Center(
           child: Container(
@@ -157,23 +130,24 @@ class _ManageScreenState extends State<ManageScreen> {
                 state is ClinicDelStateSuccess) {
               return Column(
                 children: <Widget>[
-                  BlocConsumer<UserManagerBloc, UserManagerState>(listener: (context, state){
-                   if(state is UserManagerStateSuccess){
-                      _showSnackBar("Thêm thành công", true);
-                   }
-                   if(state is UserManagerStateFailure){
-                     _showSnackBar("Thêm không thành công", false);
-                   }
-
-                  },
-                  builder: (context, state){
-                    if(state is UserManagerStateLoading){
-                      return Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: CircularProgress());
-                    }
-                    return Text('');
-                  },),
+                  BlocConsumer<UserManagerBloc, UserManagerState>(
+                    listener: (context, state) {
+                      if (state is UserManagerStateSuccess) {
+                        _showSnackBar("Thêm thành công", true);
+                      }
+                      if (state is UserManagerStateFailure) {
+                        _showSnackBar("Thêm không thành công", false);
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is UserManagerStateLoading) {
+                        return Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: CircularProgress());
+                      }
+                      return Text('');
+                    },
+                  ),
                   Align(
                     alignment: Alignment.topCenter,
                     child: Container(
@@ -607,7 +581,7 @@ class _ManageScreenState extends State<ManageScreen> {
             }
 
             if (state is ClinicStateFailure) {
-              return Text('get Clinic some thing went wrong!!!');
+              return Text('Lấy cơ sở lỗi!!!');
             }
 
             return Center(

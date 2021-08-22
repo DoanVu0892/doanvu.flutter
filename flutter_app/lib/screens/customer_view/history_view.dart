@@ -31,7 +31,7 @@ class _HistoryViewState extends State<HistoryView> {
               dataHistory = state.response.dataHistory;
             });
           }
-          if(state is HistoryStateFailure){
+          if (state is HistoryStateFailure) {
             _showSnackBar("get Schedule failure", false);
           }
         },
@@ -42,7 +42,7 @@ class _HistoryViewState extends State<HistoryView> {
 
           if (state is HistoryStateFailure) {
             return Center(
-              child:Container(
+              child: Container(
                 margin: EdgeInsets.only(top: 30),
                 height: 50,
                 decoration: const BoxDecoration(
@@ -81,8 +81,8 @@ class _HistoryViewState extends State<HistoryView> {
                         fontFamily: 'WorkSansBold'),
                   ),
                   onPressed: () {
-                    BlocProvider.of<HistoryBloc>(context)
-                        .add(HistoryEventRequested(patientId: widget.patientId));
+                    BlocProvider.of<HistoryBloc>(context).add(
+                        HistoryEventRequested(patientId: widget.patientId));
                   },
                 ),
               ),
@@ -134,55 +134,56 @@ class _HistoryViewState extends State<HistoryView> {
             //         .add(HistoryEventRequested(patientId: widget.patientId));
             //   },
             // ),
-              child: Container(
-                margin: EdgeInsets.only(top: 30),
-                height: 50,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: CustomTheme.loginGradientStart,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                    BoxShadow(
-                      color: CustomTheme.loginGradientEnd,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                  ],
-                  gradient: LinearGradient(
-                      colors: <Color>[
-                        CustomTheme.loginGradientEnd,
-                        CustomTheme.loginGradientStart
-                      ],
-                      begin: FractionalOffset(0.2, 0.2),
-                      end: FractionalOffset(1.0, 1.0),
-                      stops: <double>[0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child: MaterialButton(
-                  padding: EdgeInsets.symmetric(horizontal: 45),
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  child: Text(
-                    'bấm để lấy thông tin',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontFamily: 'WorkSansBold'),
+            child: Container(
+              margin: EdgeInsets.only(top: 30),
+              height: 50,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: CustomTheme.loginGradientStart,
+                    offset: Offset(1.0, 6.0),
+                    blurRadius: 20.0,
                   ),
-                  onPressed: () {
-                    BlocProvider.of<HistoryBloc>(context)
-                            .add(HistoryEventRequested(patientId: widget.patientId));
-                  },
-                ),
+                  BoxShadow(
+                    color: CustomTheme.loginGradientEnd,
+                    offset: Offset(1.0, 6.0),
+                    blurRadius: 20.0,
+                  ),
+                ],
+                gradient: LinearGradient(
+                    colors: <Color>[
+                      CustomTheme.loginGradientEnd,
+                      CustomTheme.loginGradientStart
+                    ],
+                    begin: FractionalOffset(0.2, 0.2),
+                    end: FractionalOffset(1.0, 1.0),
+                    stops: <double>[0.0, 1.0],
+                    tileMode: TileMode.clamp),
               ),
+              child: MaterialButton(
+                padding: EdgeInsets.symmetric(horizontal: 45),
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                child: Text(
+                  'bấm để lấy thông tin',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontFamily: 'WorkSansBold'),
+                ),
+                onPressed: () {
+                  BlocProvider.of<HistoryBloc>(context)
+                      .add(HistoryEventRequested(patientId: widget.patientId));
+                },
+              ),
+            ),
           );
         },
       ),
     );
   }
+
   void _showSnackBar(String msg, bool success) {
     CustomSnackBar(
         context,

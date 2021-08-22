@@ -9,9 +9,11 @@ class DentistData extends Equatable {
   final int id;
   final String name;
   final String phone;
-  final String clinicId;
+  final int clinicId;
+  final int count;
 
-  const DentistData({this.status, this.id, this.name, this.phone, this.clinicId});
+  const DentistData(
+      {this.status, this.id, this.name, this.phone, this.clinicId, this.count});
 
   @override
   // TODO: implement props
@@ -23,7 +25,8 @@ class DentistData extends Equatable {
       id: jsonObject['_id'] ?? 0,
       name: jsonObject['name'] ?? '',
       phone: jsonObject['phone'] ?? '',
-      clinicId: jsonObject['clinicId'] ?? '',
+      clinicId: jsonObject['ClinicId'] ?? 0,
+      count: jsonObject['count'] ?? 0,
     );
   }
 }
@@ -38,12 +41,10 @@ class DentistResponse extends BaseResponse {
   List<Object> get props => [dataList];
 
   factory DentistResponse.fromJson(dynamic jsonObject) {
-
     var list = jsonObject['data'] as List;
-    List<DentistData> dataList = list.map((i) => DentistData.fromJson(i)).toList();
+    List<DentistData> dataList =
+        list.map((i) => DentistData.fromJson(i)).toList();
 
-    return DentistResponse(
-        dataList: dataList ?? ''
-    );
+    return DentistResponse(dataList: dataList ?? '');
   }
 }

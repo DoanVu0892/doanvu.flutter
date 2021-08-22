@@ -1,8 +1,10 @@
+import 'package:alert/alert.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
+import 'package:flutter_app/blocs/list_work_bloc.dart';
 import 'package:flutter_app/blocs/notify_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/block_view.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
 import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_app/events/dentist_event.dart';
+import 'package:flutter_app/events/list_work_event.dart';
 import 'package:flutter_app/events/notify_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/clinic.dart';
@@ -18,10 +21,12 @@ import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/screens/manager_view/leave_schedule/leave_schedule.dart';
+import 'package:flutter_app/screens/manager_view/update_dentist_with_clinicId.dart';
 import 'package:flutter_app/states/clinic_state.dart';
 import 'package:flutter_app/states/dentist_state.dart';
 import 'package:flutter_app/states/schedule_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oktoast/oktoast.dart';
 
 import 'manage_screen.dart';
 import 'notify_manager_view.dart';
@@ -164,13 +169,38 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               MaterialPageRoute(builder: (context) => LeaveScheduleView()));
         }
         break;
-      case  'Thông báo':
+      case 'Thông báo':
         {
           print('onClick Alert');
-          BlocProvider.of<NotifyBloc>(context).add(NotifyManagerEventRequested());
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => NotifyManagerView()));
+          BlocProvider.of<NotifyBloc>(context)
+              .add(NotifyManagerEventRequested());
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => NotifyManagerView()));
         }
         break;
+      case 'Quản lý bác sỹ':
+        {
+          print('onClick Quản lý bác sỹ');
+          BlocProvider.of<ListWorkBloc>(context).add(ListWorkEventRequested());
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => UpdateDentistWithCliniId()));
+        }
+        break;
+    }
+  }
+
+  Icon _getIconWithChoice(String choice) {
+    switch (choice) {
+      case 'Quản lý':
+        return Icon(Icons.person_add, color: Colors.blueAccent);
+      case 'Lịch nghỉ':
+        return Icon(Icons.schedule, color: Colors.blueAccent);
+      case 'Thông báo':
+        return Icon(Icons.notifications, color: Colors.blueAccent);
+      case 'Quản lý bác sỹ':
+        return Icon(Icons.manage_accounts, color: Colors.blueAccent);
+      default:
+        return Icon(Icons.manage_accounts, color: Colors.blueAccent);
     }
   }
 
@@ -225,46 +255,37 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           ),
           backgroundColor: CustomTheme.loginGradientStart,
           actions: <Widget>[
-            /*
-            Container(
-              margin: EdgeInsets.only(right: 10),
-              child: InkWell(
-                onTap: () async {
-                  //manage navigator
-                  BlocProvider.of<ClinicBloc>(context).add(
-                    ClinicEventRequested(),
-                  );
-                  bool shouldUpdate = await Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => ManageScreen()));
-                  if (shouldUpdate)
-                    BlocProvider.of<ClinicBloc>(context).add(
-                      ClinicEventRequested(),
-                    );
-                },
-                child: Container(
-                    width: 60,
-                    height: 30,
-                    child: Center(child: Icon(Icons.person))),
-              ),
-            )*/
             PopupMenuButton<String>(
               onSelected: handleClick,
               itemBuilder: (BuildContext context) {
-                return {'Quản lý', 'Lịch nghỉ', 'Thông báo'}.map((String choice) {
+                return {'Quản lý', 'Lịch nghỉ', 'Thông báo', 'Quản lý bác sỹ'}
+                    .map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Container(
-                      child: Center(
-                          child: Text(
-                        choice,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 18),
-                      )),
+                      child: Row(
+                        children: <Widget>[
+                          _getIconWithChoice(choice),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Center(
+                                child: Text(
+                              choice,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 18),
+                            )),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 }).toList();
               },
-              icon: Icon(Icons.menu),
+              icon: Container(
+                  margin: EdgeInsets.only(right: 10), child: Icon(Icons.menu)),
             ),
           ],
         ),
@@ -342,13 +363,22 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   _showSnackBar('lấy lịch lỗi', false);
                 }
                 if (state is ScheduleAddStateSuccess) {
-                  print('state: ${state.response.data.id}');
+                  if (state.response.status == 'ok') {
+                    _showSnackBar('Đặt lịch thành công', true);
+                  } else {
+                    _showToast('Đặt lịch lỗi', '${state.response.message}',
+                        false, () {});
+                  }
                   BlocProvider.of<ScheduleBloc>(context).add(
                       ScheduleEventRequested(
                           dentistId: _dentist.id,
                           appointmentDate: appointmentDate,
                           workShift: shiftWork.toString()));
                 }
+                if (state is ScheduleAddStateFailure) {
+                  _showSnackBar('Đặt lịch lỗi', false);
+                }
+
                 if (state is ScheduleDelStateSuccess) {
                   print('state: $state');
                   BlocProvider.of<ScheduleBloc>(context).add(
@@ -356,6 +386,9 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           dentistId: _dentist.id,
                           appointmentDate: appointmentDate,
                           workShift: shiftWork.toString()));
+                }
+                if (state is ScheduleDelStateFailure) {
+                  _showSnackBar('Xóa lịch lỗi', false);
                 }
               },
               builder: (context, state) {
@@ -385,11 +418,11 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 }
                 if (state is ScheduleStateFailure) {
                   return Center(
-                    child: Text('getSchedule error'),
+                    child: Text('Lấy lịch lỗi'),
                   );
                 }
                 return Center(
-                  child: Text('getSchedule error'),
+                  child: Text('Lấy lịch lỗi'),
                 );
               },
             ),
@@ -454,7 +487,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                       highlightColor: Colors.transparent,
                       splashColor: Colors.transparent,
                       child: Text(
-                        'Lấy danh sách nha sy',
+                        'Lấy danh sách nha sỹ',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.0,
@@ -521,8 +554,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   color: Colors.white,
                 ),
                 child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(canvasColor: Colors.white),
+                  data: Theme.of(context).copyWith(canvasColor: Colors.white),
                   child: DropdownButton<DentistData>(
                     isExpanded: true,
                     style: TextStyle(
@@ -558,7 +590,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               )
             ],
           ),
-        ),/*
+        ),
+        /*
         Container(
           child: BlocConsumer<DentistBloc, DentistState>(
             listener: (context, state) {
@@ -809,6 +842,69 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             )
           ],
         ));
+  }
+
+  void _showToast(
+      String title, String msg, bool success, VoidCallback dismiss) {
+    showToastWidget(
+      Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.white),
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          ),
+          height: 140,
+          width: 250,
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 15,
+              ),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      success ? Icons.done : Icons.warning_amber_outlined,
+                      color: success ? Colors.green : Colors.red,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      title,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    msg,
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      duration: Duration(seconds: 3),
+      onDismiss: dismiss != null ? dismiss : () {},
+    );
   }
 
   DateTime selectedDate = DateTime.now();

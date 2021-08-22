@@ -1,4 +1,6 @@
 PODS:
+  - alert (0.0.1):
+    - Flutter
   - Firebase/CoreOnly (8.0.0):
     - FirebaseCore (= 8.0.0)
   - Firebase/Messaging (8.0.0):
@@ -66,6 +68,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - alert (from `.symlinks/plugins/alert/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
@@ -85,6 +88,8 @@ SPEC REPOS:
     - PromisesObjC
 
 EXTERNAL SOURCES:
+  alert:
+    :path: ".symlinks/plugins/alert/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_messaging:
@@ -97,6 +102,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/searchable_dropdown/ios"
 
 SPEC CHECKSUMS:
+  alert: fa3137f80aa8ff29c8efbee8df29648605f622f7
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
   firebase_core: cda81ae37eda6df2bc2d16027fda527987c4bd33
   firebase_messaging: 861664166bbdd527cb40396d4a381f0a1c39f61d

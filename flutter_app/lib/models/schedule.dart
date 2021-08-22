@@ -81,6 +81,6 @@ class ScheduleResponse extends Equatable {
         status: jsonObject['status'] ?? '',
         statusCode: jsonObject['statusCode'] ?? 0,
         message: jsonObject['message'] ?? '',
-        data: dataList);
+        data: dataList ?? '');
   }
 }

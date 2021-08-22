@@ -8,7 +8,7 @@ import 'package:flutter_app/models/notify.dart';
 import 'package:flutter_app/states/notify_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class NotifyCustomerView extends StatefulWidget{
+class NotifyCustomerView extends StatefulWidget {
   @override
   _NotifyCustomerViewState createState() => _NotifyCustomerViewState();
 }
@@ -20,21 +20,21 @@ class _NotifyCustomerViewState extends State<NotifyCustomerView> {
   Widget build(BuildContext context) {
     return Container(
       child: BlocConsumer<NotifyBloc, NotifyState>(
-        listener: (context, state){
-          if(state is NotifyStateSuccess){
+        listener: (context, state) {
+          if (state is NotifyCMStateSuccess) {
             setState(() {
               dataNotify = state.response.dataNotify;
             });
           }
         },
-        builder: (context, state){
-          if(state is NotifyStateLoading){
+        builder: (context, state) {
+          if (state is NotifyStateLoading) {
             return Center(
               child: CircularProgress(),
             );
           }
 
-          if(state is NotifyStateSuccess){
+          if (state is NotifyCMStateSuccess) {
             return Container(
               margin: EdgeInsets.all(10),
               child: ListView.builder(
@@ -44,19 +44,55 @@ class _NotifyCustomerViewState extends State<NotifyCustomerView> {
                   itemBuilder: (context, index) {
                     final notify = dataNotify[index];
                     return Card(
-                      child: ListTile(
-                        leading: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Colors.blueAccent),
-                            child: Icon(
-                              Icons.info,
-                              color: Colors.white,
-                            )),
-                        title: Text('${notify.title}', style: TextStyle(fontSize: 16),),
-                        subtitle: Text('${notify.date} ${notify.time}', style: TextStyle(fontSize: 14),),
-                        onTap: () {},
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: Colors.blueAccent),
+                                child: Icon(
+                                  Icons.notifications,
+                                  color: Colors.white,
+                                )),
+                            Container(
+                              width: 300,
+                              margin: EdgeInsets.only(left: 10, right: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    '${notify.title}',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    '${notify.message}',
+                                    style: TextStyle(fontSize: 16),
+                                    maxLines: 3,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    '${notify.date} ${notify.time}',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     );
                   }),

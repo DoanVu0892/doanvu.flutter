@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/base_response.dart';
 import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/models/dentist.dart';
+import 'package:flutter_app/models/dentist_update.dart';
 import 'package:flutter_app/models/history_response.dart';
 import 'package:flutter_app/models/leave_schedule.dart';
 import 'package:flutter_app/models/notify.dart';
@@ -27,6 +29,7 @@ final _delClinic = (clinicId) => '$baseUrl/clinic/$clinicId/delete';
 //dentist
 // final _dentistUrl = (clinicId) => '$baseUrl/dentist/$clinicId/byClinic';
 final _dentistUrl = '$baseUrl/dentist/list';
+final _listWorkUrl = '$baseUrl/dentist/listWork';
 final _addDentistUrl = '$baseUrl/dentist/add';
 final _editDentistUrl = (dentistId) => '$baseUrl/dentist/$dentistId/edit';
 final _delDentistUrl = (dentistId) => '$baseUrl/dentist/$dentistId/delete';
@@ -45,7 +48,8 @@ final _leaveScheduleUrl = '$baseUrl/leaveSchedule/add';
 final _deviceTokenUrl = '$baseUrl/device/add';
 final _addUserManagerUrl = '$baseUrl/user/add';
 final _getNotifyManager = '$baseUrl/notify/manager';
-final _getNotifyCustomer = (patientId) => '$baseUrl/notify/list?patienId=';
+final _getNotifyCustomer =
+    (patientId) => '$baseUrl/notify/list?patientId=$patientId';
 final _updateDentist = '$baseUrl/dentist/updateClinic';
 
 class AppRepository {
@@ -450,6 +454,7 @@ class AppRepository {
         headers: {'Authorization': 'Bearer $accessToken'});
     if (response.statusCode == 200) {
       httpClient.close();
+      print('resnoti1: ${response.body}');
       return ResponseNotify.fromJson(jsonDecode(response.body));
     } else {
       httpClient.close();
@@ -457,14 +462,16 @@ class AppRepository {
     }
   }
 
-  Future<ResponseNotify> getNotifyCustomer(String patientId) async {
+  Future<ResponseNotifyCM> getNotifyCustomer(String patientId) async {
     httpClient.close();
     httpClient = http.Client();
+    print(_getNotifyCustomer(patientId));
     final response = await httpClient.get(_getNotifyCustomer(patientId),
         headers: {'Authorization': 'Bearer $accessToken'});
     if (response.statusCode == 200) {
       httpClient.close();
-      return ResponseNotify.fromJson(jsonDecode(response.body));
+      print('res2: ${response.body}');
+      return ResponseNotifyCM.fromJson(jsonDecode(response.body));
     } else {
       httpClient.close();
       throw Exception('getNotify customer fail');
@@ -474,20 +481,38 @@ class AppRepository {
   //update dentist with clinicId
 
   Future<BaseResponse> updateDentistWithClinicId(
-      String dentistId, String clinicId) async {
+      List<Map<String, dynamic>> listUpdate, String date) async {
     httpClient.close();
     httpClient = http.Client();
-    final response = await httpClient.put(_updateDentist, body: jsonEncode(
-        {
-          'dentistId' : dentistId,
-          'clinicId' : clinicId,
-        }), headers: {'Authorization': 'Bearer $accessToken'});
-    if(response.statusCode == 200){
+    print('abc: $listUpdate');
+    print(jsonEncode(listUpdate));
+    final response = await httpClient.put(_updateDentist,
+        body: jsonEncode({'date': date, 'work': listUpdate}),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          "Content-Type": "application/json"
+        });
+    if (response.statusCode == 200) {
       httpClient.close();
       return BaseResponse.fromJson(jsonDecode(response.body));
-    }else{
+    } else {
       httpClient.close();
       throw Exception('update Dentist failure');
+    }
+  }
+
+  //listWork
+  Future<ResponseUpdateDentist> getListWork() async {
+    httpClient.close();
+    httpClient = http.Client();
+    final response = await httpClient
+        .get(_listWorkUrl, headers: {'Authorization': 'Bearer $accessToken'});
+    if (response.statusCode == 200) {
+      httpClient.close();
+      return ResponseUpdateDentist.fromJson(jsonDecode(response.body));
+    } else {
+      httpClient.close();
+      throw Exception('get list work failure');
     }
   }
 }

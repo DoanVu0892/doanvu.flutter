@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 
 class ScheduleAddResponseData extends Equatable {
@@ -13,13 +12,13 @@ class ScheduleAddResponseData extends Equatable {
 
   const ScheduleAddResponseData(
       {this.status,
-        this.id,
-        this.parientId,
-        this.parientName,
-        this.dentistId,
-        this.appointmentDate,
-        this.note,
-        this.blockId});
+      this.id,
+      this.parientId,
+      this.parientName,
+      this.dentistId,
+      this.appointmentDate,
+      this.note,
+      this.blockId});
 
   @override
   // TODO: implement props
@@ -53,21 +52,23 @@ class ScheduleAddResponse extends Equatable {
   List<Object> get props => [data];
 
   factory ScheduleAddResponse.fromJson(dynamic jsonObject) {
+    // final data = ScheduleAddResponseData.fromJson(jsonObject['data']) ?? '';
+
     return ScheduleAddResponse(
       status: jsonObject['status'] ?? '',
       statusCode: jsonObject['statusCode'] ?? 0,
       message: jsonObject['message'] ?? '',
-      data: ScheduleAddResponseData.fromJson(jsonObject['data']) ?? '',
+      // data: data != null ? data : '',
     );
   }
 }
+
 class ScheduleDelResponse extends Equatable {
   final String status;
   final int statusCode;
   final String message;
 
-  const ScheduleDelResponse(
-      {this.status, this.statusCode, this.message});
+  const ScheduleDelResponse({this.status, this.statusCode, this.message});
 
   @override
   // TODO: implement props

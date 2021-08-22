@@ -11,6 +11,8 @@ import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/states/schedule_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:alert/alert.dart';
+import 'package:oktoast/oktoast.dart';
 
 class BookView extends StatefulWidget {
   final User user;
@@ -147,16 +149,27 @@ class _BookViewState extends State<BookView> {
                   _showSnackBar('lấy lịch lỗi', false);
                 }
                 if (state is ScheduleAddStateSuccess) {
+                  if (state.response.status == 'ok') {
+                    _showSnackBar('Đặt lịch thành công', true);
+                  } else {
+                    // Alert(message: 'Đặt lịch lỗi!\n${state.response.message}')
+                    //     .show();
+                    _showToast('Đặt lịch lỗi', '${state.response.message}',
+                        false, () {});
+                  }
                   setState(() {
                     this.startBooked = false;
                   });
-                  print('state: ${state.response.data.id}');
                   BlocProvider.of<ScheduleBloc>(context).add(
                       ScheduleEventRequested(
                           dentistId: widget.user.dentistId,
                           appointmentDate: appointmentDate,
                           workShift: shiftWork.toString()));
                 }
+                if (state is ScheduleAddStateFailure) {
+                  _showSnackBar('Đặt lịch lỗi', false);
+                }
+
                 if (state is ScheduleDelStateSuccess) {
                   setState(() {
                     this.startBooked = false;
@@ -167,6 +180,9 @@ class _BookViewState extends State<BookView> {
                           dentistId: widget.user.dentistId,
                           appointmentDate: appointmentDate,
                           workShift: shiftWork.toString()));
+                }
+                if (state is ScheduleDelStateFailure) {
+                  _showSnackBar('Xóa lịch lỗi', false);
                 }
               },
               builder: (context, state) {
@@ -491,5 +507,68 @@ class _BookViewState extends State<BookView> {
             )
           ],
         ));
+  }
+
+  void _showToast(
+      String title, String msg, bool success, VoidCallback dismiss) {
+    showToastWidget(
+      Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.white),
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          ),
+          height: 140,
+          width: 250,
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 15,
+              ),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      success ? Icons.done : Icons.warning_amber_outlined,
+                      color: success ? Colors.green : Colors.red,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      title,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    msg,
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      duration: Duration(seconds: 3),
+      onDismiss: dismiss != null ? dismiss : () {},
+    );
   }
 }

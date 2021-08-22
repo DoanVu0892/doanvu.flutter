@@ -6,16 +6,19 @@ import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
 import 'package:flutter_app/blocs/history_bloc.dart';
 import 'package:flutter_app/blocs/leave_schedule_bloc.dart';
+import 'package:flutter_app/blocs/list_work_bloc.dart';
 import 'package:flutter_app/blocs/login_bloc.dart';
 import 'package:flutter_app/blocs/notify_bloc.dart';
 import 'package:flutter_app/blocs/patient_bloc.dart';
 import 'package:flutter_app/blocs/platform_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
+import 'package:flutter_app/blocs/update_dentist_with_clinic_bloc.dart';
 import 'package:flutter_app/customs/pushNotification.dart';
 import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/screens/login_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:oktoast/oktoast.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 Future<void> main() async {
@@ -27,7 +30,13 @@ Future<void> main() async {
   runApp(MultiBlocProvider(
       providers: [
         BlocProvider<LeaveScheduleBloc>(
-            create: (context) => LeaveScheduleBloc(appRepository: appRepository)),
+            create: (context) =>
+                LeaveScheduleBloc(appRepository: appRepository)),
+        BlocProvider<UpdateDentistWithClinicBloc>(
+            create: (context) =>
+                UpdateDentistWithClinicBloc(appRepository: appRepository)),
+        BlocProvider<ListWorkBloc>(
+            create: (context) => ListWorkBloc(appRepository: appRepository)),
         BlocProvider<UserManagerBloc>(
             create: (context) => UserManagerBloc(appRepository: appRepository)),
         BlocProvider<NotifyBloc>(
@@ -85,26 +94,35 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     handleAsync();
 
     WidgetsBinding.instance.addObserver(this);
-
   }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
-@override
-Widget build(BuildContext context) {
-  return OverlaySupport(
-    child: MaterialApp(
-      title: 'Dential',
-      home: BlocProvider(
-        create: (context) => LoginBloc(appRepository: widget.appRepository),
-        child: LoginScreen(appRepository: widget.appRepository, tokenDevice: tokenDevice,),
+  @override
+  Widget build(BuildContext context) {
+    return OverlaySupport(
+      child: OKToast(
+        child: MaterialApp(
+          title: 'Dential',
+          home: BlocProvider(
+            create: (context) => LoginBloc(appRepository: widget.appRepository),
+            child: LoginScreen(
+              appRepository: widget.appRepository,
+              tokenDevice: tokenDevice,
+            ),
+          ),
+          routes: {
+            "/login": (BuildContext context) => new LoginScreen(
+                  appRepository: widget.appRepository,
+                  tokenDevice: tokenDevice,
+                ),
+          },
+        ),
       ),
-      routes: {
-        "/login" : (BuildContext context) => new LoginScreen(appRepository: widget.appRepository, tokenDevice: tokenDevice,),
-      },
-    ),
-  );
-}}
+    );
+  }
+}

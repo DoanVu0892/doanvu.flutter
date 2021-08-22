@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CircularProgress extends StatelessWidget {
+  final Color background;
+  CircularProgress({this.background});
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -9,7 +11,7 @@ class CircularProgress extends StatelessWidget {
       width: 100.0,
       height: 100.0,
       decoration: ShapeDecoration(
-        color: Colors.white,
+        color: background != null ? background : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(10.0),

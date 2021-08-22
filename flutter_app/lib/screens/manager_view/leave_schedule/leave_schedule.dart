@@ -136,10 +136,10 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                     if (state is LeaveScheduleFailure) {
                       _showSnackBar('Đặt lịch nghỉ lỗi', false);
                     }
-                    new Future.delayed(
-                        const Duration(milliseconds: Constant.duration), () {
-                      Navigator.pop(context);
-                    });
+                    // new Future.delayed(
+                    //     const Duration(milliseconds: Constant.duration), () {
+                    //   Navigator.pop(context);
+                    // });
                   },
                   builder: (context, state) {
                     if (state is LeaveScheduleLoading) {

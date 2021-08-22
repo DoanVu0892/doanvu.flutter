@@ -34,7 +34,8 @@ class LoginScreen extends StatefulWidget {
   final AppRepository appRepository;
   final String tokenDevice;
 
-  LoginScreen({@required this.appRepository, this.tokenDevice}) : assert(appRepository != null);
+  LoginScreen({@required this.appRepository, this.tokenDevice})
+      : assert(appRepository != null);
 
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
@@ -85,8 +86,7 @@ class _LoginScreenState extends State<LoginScreen>
       });
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print(
-          "onMessageOpenedApp: ${message.notification} ");
+      print("onMessageOpenedApp: ${message.notification} ");
       setState(() {
         pushed = true;
       });
@@ -138,8 +138,11 @@ class _LoginScreenState extends State<LoginScreen>
         // mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           SizedBox(height: _animation.value),
+          // SizedBox(
+          //   height: 50,
+          // ),
           Padding(
-            padding: EdgeInsets.only(top: _animation.value + 30),
+            padding: EdgeInsets.only(top: _animation.value + 50),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Image(
@@ -318,12 +321,13 @@ class _LoginScreenState extends State<LoginScreen>
                       user = loginState.response.data.user;
                     });
 
-                    if(user != null){
-                     // BlocProvider.of<PlatformBloc>(context).add(
-                     //    PlatformEventRequested(token: widget.tokenDevice, patientId: user.id)
-                     //  );
-                     final response = await widget.appRepository.sendDeviceToken(widget.tokenDevice, '${user.id}');
-                     print("check: ${response.statusCode}");
+                    if (user != null) {
+                      // BlocProvider.of<PlatformBloc>(context).add(
+                      //    PlatformEventRequested(token: widget.tokenDevice, patientId: user.id)
+                      //  );
+                      final response = await widget.appRepository
+                          .sendDeviceToken(widget.tokenDevice, '${user.id}');
+                      print("check: ${response.statusCode}");
                     }
 
                     if (loginState.response.data.user.userType == 'manager') {
