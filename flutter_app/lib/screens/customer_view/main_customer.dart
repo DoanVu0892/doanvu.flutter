@@ -11,6 +11,7 @@ import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/screens/customer_view/book_view.dart';
+import 'package:flutter_app/screens/customer_view/feedback_view.dart';
 import 'package:flutter_app/screens/customer_view/history_view.dart';
 import 'package:flutter_app/screens/customer_view/notify_customer_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,14 +20,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class MainCustomerScreen extends StatefulWidget {
   final User user;
   final AppRepository appRepository;
-  const MainCustomerScreen({Key key, this.user, this.appRepository}) : assert(user != null), super(key: key);
+  const MainCustomerScreen({Key key, this.user, this.appRepository})
+      : assert(user != null),
+        super(key: key);
 
   @override
   State<MainCustomerScreen> createState() => _MainCustomerScreenState();
 }
 
 /// This is the private State class that goes with MyStatefulWidget.
-class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBindingObserver {
+class _MainCustomerScreenState extends State<MainCustomerScreen>
+    with WidgetsBindingObserver {
   int _selectedIndex = 0;
   String title = 'Đặt lịch';
 
@@ -43,36 +47,38 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBin
     super.dispose();
   }
 
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
-    if(state == AppLifecycleState.inactive || state == AppLifecycleState.detached){
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
       return;
-    }else if(state == AppLifecycleState.paused){
+    } else if (state == AppLifecycleState.paused) {
       print('run onBackground');
-    }else if(state == AppLifecycleState.resumed){
+    } else if (state == AppLifecycleState.resumed) {
       print('call checkLogin API');
       print('accessToken: ${widget.appRepository.accessToken}');
       final checkLogin = await widget.appRepository.checkLogin();
       print('call checkLogin API: $checkLogin');
       if (checkLogin && widget.appRepository.isLogin) {
-       final abc = await showDialog(
+        final abc = await showDialog(
           context: context,
           barrierDismissible: false,
           builder: (c) => AlertDialog(
             title: Center(
                 child: Text(
-                  'Cảnh báo',
-                  style: TextStyle(color: Colors.redAccent),
-                )),
+              'Cảnh báo',
+              style: TextStyle(color: Colors.redAccent),
+            )),
             content: Container(
               alignment: Alignment.center,
               height: 40,
               child: Center(
                   child: Text(
-                    'Phiên đăng nhập đã hết hạn\n Bạn cần đăng nhập lại!', textAlign: TextAlign.center,)),
+                'Phiên đăng nhập đã hết hạn\n Bạn cần đăng nhập lại!',
+                textAlign: TextAlign.center,
+              )),
             ),
             actions: [
               FlatButton(
@@ -82,16 +88,16 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBin
                 ),
                 onPressed: () => {
                   // Navigator.popAndPushNamed(context, '/login'),
-                  Navigator.pop(context,true),
+                  Navigator.pop(context, true),
                   widget.appRepository.isLogin = false,
                 },
               ),
             ],
           ),
         );
-       if(abc){
-         Navigator.pop(context,true);
-       }
+        if (abc) {
+          Navigator.pop(context, true);
+        }
       }
     }
   }
@@ -100,28 +106,35 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBin
     print('onTapItem');
     setState(() {
       _selectedIndex = index;
-      if(_selectedIndex == 0){
+      if (_selectedIndex == 0) {
         title = 'Đặt lịch';
-      }else if(_selectedIndex == 1){
+      } else if (_selectedIndex == 1) {
         title = 'Lịch sử';
-      }else if(_selectedIndex == 2){
+      } else if (_selectedIndex == 2) {
         title = 'Thông báo';
+      } else if (_selectedIndex == 3) {
+        title = 'Góp ý';
       }
     });
   }
 
-  Widget getBody( )  {
-    if(this._selectedIndex == 0) {
+  Widget getBody() {
+    if (this._selectedIndex == 0) {
       return BookView(user: widget.user);
-    } else if(this._selectedIndex== 1) {
-      BlocProvider.of<HistoryBloc>(context).add(
-        HistoryEventRequested(patientId: widget.user.id)
-      );
+    } else if (this._selectedIndex == 1) {
+      BlocProvider.of<HistoryBloc>(context)
+          .add(HistoryEventRequested(patientId: widget.user.id));
 
-      return HistoryView(patientId: widget.user.id,);
-    }else if(this._selectedIndex == 2){
-      BlocProvider.of<NotifyBloc>(context).add(NotifyEventRequested(patientId: widget.user.id));
+      return HistoryView(
+        patientId: widget.user.id,
+      );
+    } else if (this._selectedIndex == 2) {
+      BlocProvider.of<NotifyBloc>(context)
+          .add(NotifyEventRequested(patientId: widget.user.id));
       return NotifyCustomerView();
+    } else if (this._selectedIndex == 3) {
+      // BlocProvider.of<NotifyBloc>(context).add(NotifyEventRequested(patientId: widget.user.id));
+      return FeedBackView();
     }
   }
 
@@ -197,16 +210,14 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBin
           ),
           bottomNavigationBar: BottomNavigationBar(
             iconSize: 30,
-            selectedIconTheme: IconThemeData (
+            selectedIconTheme: IconThemeData(
                 // color: CustomTheme.loginGradientEnd,
                 opacity: 1.0,
-                size: 35
-            ),
-            unselectedIconTheme: IconThemeData (
+                size: 35),
+            unselectedIconTheme: IconThemeData(
                 // color: Colors.black45,
                 opacity: 0.5,
-                size: 25
-            ),
+                size: 25),
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.access_time),
@@ -220,12 +231,15 @@ class _MainCustomerScreenState extends State<MainCustomerScreen> with WidgetsBin
                 icon: Icon(Icons.notifications_active),
                 label: 'Thông báo',
               ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.notifications_active),
+                label: 'Góp ý',
+              ),
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.amber[800],
             onTap: _onItemTapped,
           ),
-        )
-    );
+        ));
   }
 }
