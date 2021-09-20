@@ -17,14 +17,17 @@ class ClinicBloc extends Bloc<ClinicEvent, ClinicState> {
     if (clinicEvent is ClinicEventRequested) {
       yield ClinicStateLoading();
       try {
-        final ClinicResponse response =
-            await new Future.delayed(const Duration(milliseconds: Constant.duration), () {
+        final ClinicResponse response = await new Future.delayed(
+            const Duration(milliseconds: Constant.duration), () {
           return appRepository.getClinic();
         });
         yield ClinicStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
-        yield ClinicStateFailure();
+        if (exception == 'logout')
+          yield ClinicStateLogout();
+        else
+          yield ClinicStateFailure();
       }
     } else if (clinicEvent is ClinicAddEventRequested) {
       yield ClinicStateLoading();
@@ -37,7 +40,10 @@ class ClinicBloc extends Bloc<ClinicEvent, ClinicState> {
         yield ClinicAddStateSuccess(response: response);
       } catch (ex) {
         print('ex: $ex');
-        yield ClinicStateFailure();
+        if (ex == 'logout')
+          yield ClinicStateLogout();
+        else
+          yield ClinicStateFailure();
       }
     } else if (clinicEvent is ClinicEditEventRequested) {
       yield ClinicStateLoading();
@@ -50,19 +56,27 @@ class ClinicBloc extends Bloc<ClinicEvent, ClinicState> {
         yield ClinicEditStateSuccess(response: response);
       } catch (ex) {
         print('ex: $ex');
-        yield ClinicStateFailure();
+        if (ex == 'logout')
+          yield ClinicStateLogout();
+        else
+          yield ClinicStateFailure();
       }
-    }else if (clinicEvent is ClinicDelEventRequested) {
+    } else if (clinicEvent is ClinicDelEventRequested) {
       yield ClinicStateLoading();
       try {
         final ClinicEditResponse response =
-        await Future.delayed(Duration(milliseconds: Constant.duration), () {
-          return appRepository.delClinic(clinicEvent.clinicId,);
+            await Future.delayed(Duration(milliseconds: Constant.duration), () {
+          return appRepository.delClinic(
+            clinicEvent.clinicId,
+          );
         });
         yield ClinicDelStateSuccess(response: response);
       } catch (ex) {
         print('ex: $ex');
-        yield ClinicStateFailure();
+        if (ex == 'logout')
+          yield ClinicStateLogout();
+        else
+          yield ClinicStateFailure();
       }
     }
   }

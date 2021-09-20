@@ -4,6 +4,7 @@ import 'package:flutter_app/blocs/add_manager_bloc.dart';
 import 'package:flutter_app/blocs/bloc_observer.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
+import 'package:flutter_app/blocs/feedback_bloc.dart';
 import 'package:flutter_app/blocs/history_bloc.dart';
 import 'package:flutter_app/blocs/leave_schedule_bloc.dart';
 import 'package:flutter_app/blocs/list_work_bloc.dart';
@@ -32,6 +33,8 @@ Future<void> main() async {
         BlocProvider<LeaveScheduleBloc>(
             create: (context) =>
                 LeaveScheduleBloc(appRepository: appRepository)),
+        BlocProvider<FeedBackBloc>(
+            create: (context) => FeedBackBloc(appRepository: appRepository)),
         BlocProvider<UpdateDentistWithClinicBloc>(
             create: (context) =>
                 UpdateDentistWithClinicBloc(appRepository: appRepository)),

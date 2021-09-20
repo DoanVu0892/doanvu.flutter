@@ -133,8 +133,10 @@ class _MainCustomerScreenState extends State<MainCustomerScreen>
           .add(NotifyEventRequested(patientId: widget.user.id));
       return NotifyCustomerView();
     } else if (this._selectedIndex == 3) {
-      // BlocProvider.of<NotifyBloc>(context).add(NotifyEventRequested(patientId: widget.user.id));
-      return FeedBackView();
+      print(widget.user);
+      return FeedBackView(
+        patient: widget.user,
+      );
     }
   }
 
@@ -205,7 +207,6 @@ class _MainCustomerScreenState extends State<MainCustomerScreen>
                   stops: <double>[0.0, 1.0],
                   tileMode: TileMode.clamp),
             ),
-            // child: SingleChildScrollView(
             child: this.getBody(),
           ),
           bottomNavigationBar: BottomNavigationBar(
@@ -218,7 +219,7 @@ class _MainCustomerScreenState extends State<MainCustomerScreen>
                 // color: Colors.black45,
                 opacity: 0.5,
                 size: 25),
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.access_time),
                 label: 'Đặt lịch',
@@ -232,12 +233,14 @@ class _MainCustomerScreenState extends State<MainCustomerScreen>
                 label: 'Thông báo',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.notifications_active),
+                icon: Icon(Icons.report),
                 label: 'Góp ý',
               ),
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.amber[800],
+            unselectedItemColor: Colors.grey,
+            type: BottomNavigationBarType.fixed,
             onTap: _onItemTapped,
           ),
         ));

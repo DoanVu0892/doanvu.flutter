@@ -24,7 +24,10 @@ class NotifyBloc extends Bloc<NotifyEvent, NotifyState> {
         yield NotifyStateSuccess(response: response);
       } catch (e) {
         print(e);
-        yield NotifyStateFailure();
+        if (e == 'logout')
+          yield NotifyStateLogout();
+        else
+          yield NotifyStateFailure();
       }
     } else if (notifyEvent is NotifyEventRequested) {
       yield NotifyStateLoading();
@@ -36,7 +39,10 @@ class NotifyBloc extends Bloc<NotifyEvent, NotifyState> {
         yield NotifyCMStateSuccess(response: response);
       } catch (e) {
         print(e);
-        yield NotifyStateFailure();
+        if (e == 'logout')
+          yield NotifyStateLogout();
+        else
+          yield NotifyStateFailure();
       }
     }
   }

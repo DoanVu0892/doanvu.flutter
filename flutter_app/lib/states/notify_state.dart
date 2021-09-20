@@ -29,10 +29,6 @@ class NotifyCMStateSuccess extends NotifyState {
 
 class NotifyStateLoading extends NotifyState {}
 
-class NotifyStateFailure extends NotifyState {
-  final ResponseNotify response;
-  const NotifyStateFailure({this.response});
-  @override
-  // TODO: implement props
-  List<Object> get props => [response];
-}
+class NotifyStateFailure extends NotifyState {}
+
+class NotifyStateLogout extends NotifyState {}

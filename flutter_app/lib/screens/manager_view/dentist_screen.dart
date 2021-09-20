@@ -130,6 +130,8 @@ class _DentistScreenState extends State<DentistScreen> {
                 DentistEventRequested(),
               );
               _showSnackBar('Xóa nha sỹ thành công', true);
+            } else if (state is DentistStateLogout) {
+              Navigator.popAndPushNamed(context, '/login');
             }
           },
           builder: (context, state) {

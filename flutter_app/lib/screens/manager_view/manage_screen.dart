@@ -115,6 +115,10 @@ class _ManageScreenState extends State<ManageScreen> {
               );
               _showSnackBar('Xóa chi nhánh thành công', true);
             }
+            if (state is ClinicStateLogout) {
+              // Navigator.popAndPushNamed(context, '/login');
+              Utils.gotoLogin(context);
+            }
           },
           builder: (context, state) {
             if (state is ClinicStateLoading) {
@@ -137,6 +141,10 @@ class _ManageScreenState extends State<ManageScreen> {
                       }
                       if (state is UserManagerStateFailure) {
                         _showSnackBar("Thêm không thành công", false);
+                      }
+                      if (state is UserManagerStateLogout) {
+                        // Navigator.popAndPushNamed(context, '/login');
+                        Utils.gotoLogin(context);
                       }
                     },
                     builder: (context, state) {

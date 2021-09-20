@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/clinic_bloc.dart';
 import 'package:flutter_app/blocs/dentist_bloc.dart';
+import 'package:flutter_app/blocs/feedback_bloc.dart';
 import 'package:flutter_app/blocs/list_work_bloc.dart';
 import 'package:flutter_app/blocs/notify_bloc.dart';
 import 'package:flutter_app/blocs/schedule_bloc.dart';
@@ -11,8 +12,10 @@ import 'package:flutter_app/customs/block_view.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/clinic_event.dart';
 import 'package:flutter_app/events/dentist_event.dart';
+import 'package:flutter_app/events/feedback_event.dart';
 import 'package:flutter_app/events/list_work_event.dart';
 import 'package:flutter_app/events/notify_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
@@ -28,6 +31,7 @@ import 'package:flutter_app/states/schedule_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktoast/oktoast.dart';
 
+import 'feedbacklist_view.dart';
 import 'manage_screen.dart';
 import 'notify_manager_view.dart';
 
@@ -153,7 +157,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           );
           bool shouldUpdate = await Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => ManageScreen()));
-          if (shouldUpdate)
+          if (shouldUpdate && shouldUpdate != null)
             BlocProvider.of<ClinicBloc>(context).add(
               ClinicEventRequested(),
             );
@@ -186,6 +190,14 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               builder: (context) => UpdateDentistWithCliniId()));
         }
         break;
+      case 'Phản hồi khách hàng':
+        {
+          print('onClick Phản hồi khách hàng');
+          BlocProvider.of<FeedBackBloc>(context).add(FeedbackEventRequested());
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => FeedBackListView()));
+        }
+        break;
     }
   }
 
@@ -199,6 +211,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         return Icon(Icons.notifications, color: Colors.blueAccent);
       case 'Quản lý bác sỹ':
         return Icon(Icons.manage_accounts, color: Colors.blueAccent);
+      case 'Phản hồi khách hàng':
+        return Icon(Icons.report, color: Colors.blueAccent);
       default:
         return Icon(Icons.manage_accounts, color: Colors.blueAccent);
     }
@@ -258,8 +272,13 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             PopupMenuButton<String>(
               onSelected: handleClick,
               itemBuilder: (BuildContext context) {
-                return {'Quản lý', 'Lịch nghỉ', 'Thông báo', 'Quản lý bác sỹ'}
-                    .map((String choice) {
+                return {
+                  'Quản lý',
+                  'Lịch nghỉ',
+                  'Thông báo',
+                  'Quản lý bác sỹ',
+                  'Phản hồi khách hàng'
+                }.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Container(
@@ -362,6 +381,11 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 if (state is ScheduleStateFailure) {
                   _showSnackBar('lấy lịch lỗi', false);
                 }
+                if (state is ScheduleStateLogout) {
+                  // Navigator.popAndPushNamed(context, '/login');
+                  Utils.gotoLogin(context);
+                }
+
                 if (state is ScheduleAddStateSuccess) {
                   if (state.response.status == 'ok') {
                     _showSnackBar('Đặt lịch thành công', true);
@@ -445,6 +469,10 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               if (dentistData == null || dentistData.isEmpty) {
                 setState(() {});
               }
+            }
+            if (state is DentistStateLogout) {
+              // Navigator.popAndPushNamed(context, '/login');
+              Utils.gotoLogin(context);
             }
           },
           builder: (context, state) {

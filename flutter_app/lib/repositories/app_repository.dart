@@ -7,6 +7,7 @@ import 'package:flutter_app/models/base_response.dart';
 import 'package:flutter_app/models/clinic.dart';
 import 'package:flutter_app/models/dentist.dart';
 import 'package:flutter_app/models/dentist_update.dart';
+import 'package:flutter_app/models/feedback.dart';
 import 'package:flutter_app/models/history_response.dart';
 import 'package:flutter_app/models/leave_schedule.dart';
 import 'package:flutter_app/models/notify.dart';
@@ -51,6 +52,9 @@ final _getNotifyManager = '$baseUrl/notify/manager';
 final _getNotifyCustomer =
     (patientId) => '$baseUrl/notify/list?patientId=$patientId';
 final _updateDentist = '$baseUrl/dentist/updateClinic';
+//feedback
+final _getFeedbackUrl = '$baseUrl/feedback/list';
+final _sendFeedbackUrl = '$baseUrl/feedback/add';
 
 class AppRepository {
   http.Client httpClient;
@@ -91,6 +95,8 @@ class AppRepository {
     if (response.statusCode == 200) {
       httpClient.close();
       return response;
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       return response;
@@ -106,6 +112,8 @@ class AppRepository {
     if (response.statusCode == 200) {
       httpClient.close();
       return false;
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       return true;
@@ -123,6 +131,8 @@ class AppRepository {
       print('response ${response.body}');
       httpClient.close();
       return ClinicResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error get Clinic of: $accessToken');
@@ -147,6 +157,8 @@ class AppRepository {
       print('response ${response.body}');
       httpClient.close();
       return ClinicAddResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       throw Exception('Error add Clinic of: $accessToken');
     }
@@ -171,6 +183,8 @@ class AppRepository {
       print('response ${response.body}');
       httpClient.close();
       return ClinicEditResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       throw Exception('Error edit Clinic of: $clinicId');
     }
@@ -190,6 +204,8 @@ class AppRepository {
       print('response ${response.body}');
       httpClient.close();
       return ClinicEditResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       throw Exception('Error del Clinic of: $clinicId');
     }
@@ -207,6 +223,8 @@ class AppRepository {
       print('response ${response.body}');
       httpClient.close();
       return DentistResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error get Dentist of:');
@@ -227,6 +245,8 @@ class AppRepository {
       httpClient.close();
       print('res: ${response.body}');
       return BaseResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error add Dentist of: $clinicId');
@@ -247,6 +267,8 @@ class AppRepository {
       httpClient.close();
       print('res: ${response.body}');
       return BaseResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error edit Dentist of: $dentistId');
@@ -266,6 +288,8 @@ class AppRepository {
       httpClient.close();
       print('res: ${response.body}');
       return BaseResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error del Dentist of: $dentistId');
@@ -285,6 +309,8 @@ class AppRepository {
       print('response ${response.body}');
       httpClient.close();
       return ScheduleResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error get Schedule of: $dentistId');
@@ -328,6 +354,8 @@ class AppRepository {
       httpClient.close();
       print('response ${response.body}');
       return ScheduleAddResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error add Schedule with: $patientId');
@@ -361,6 +389,8 @@ class AppRepository {
       httpClient.close();
       print('rsponse: ${response.body}');
       return ResLeaveSchedule.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       throw Exception('Error set LeaveSchedule: $dentistId');
     }
@@ -382,6 +412,8 @@ class AppRepository {
       httpClient.close();
       print('response ${response.body}');
       return ScheduleDelResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       print('response ${response.body} ${response.statusCode}');
       httpClient.close();
@@ -397,6 +429,8 @@ class AppRepository {
       httpClient.close();
       print('response ${response.body}');
       return PatientResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error get Parients of: $dentistId');
@@ -412,6 +446,8 @@ class AppRepository {
       httpClient.close();
       print('response ${response.body}');
       return PatientResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error search Parients of: $dentistId');
@@ -426,6 +462,8 @@ class AppRepository {
       httpClient.close();
       print('response ${response.body}');
       return HistoryResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('Error getHistory of: $patientId');
@@ -447,6 +485,8 @@ class AppRepository {
     if (response.statusCode == 200) {
       httpClient.close();
       return BaseResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('add user manager failure!');
@@ -464,6 +504,8 @@ class AppRepository {
       httpClient.close();
       print('resnoti1: ${response.body}');
       return ResponseNotify.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('getNotify manager fail');
@@ -480,6 +522,8 @@ class AppRepository {
       httpClient.close();
       print('res2: ${response.body}');
       return ResponseNotifyCM.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('getNotify customer fail');
@@ -503,6 +547,8 @@ class AppRepository {
     if (response.statusCode == 200) {
       httpClient.close();
       return BaseResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('update Dentist failure');
@@ -518,9 +564,54 @@ class AppRepository {
     if (response.statusCode == 200) {
       httpClient.close();
       return ResponseUpdateDentist.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
     } else {
       httpClient.close();
       throw Exception('get list work failure');
+    }
+  }
+
+  //feeback
+  Future<ResponseFeedback> getFeedBack() async {
+    httpClient.close();
+    httpClient = http.Client();
+    final response = await httpClient.get(_getFeedbackUrl,
+        headers: {'Authorization': 'Bearer $accessToken'});
+    print('response ${response.body}');
+    if (response.statusCode == 200) {
+      httpClient.close();
+      return ResponseFeedback.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      httpClient.close();
+      throw ('logout');
+    } else {
+      httpClient.close();
+      throw Exception('get feedback failure');
+    }
+  }
+
+  Future<BaseResponse> sendFeedback(String patientId, String patientName,
+      String title, String content) async {
+    httpClient.close();
+    httpClient = http.Client();
+    final response = await httpClient.post(_sendFeedbackUrl, body: {
+      'patientId': patientId,
+      'patientName': patientName,
+      'title': title,
+      'content': content,
+    }, headers: {
+      'Authorization': 'Bearer $accessToken'
+    });
+    print('response ${response.body}');
+    if (response.statusCode == 200) {
+      httpClient.close();
+      return BaseResponse.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      throw ('logout');
+    } else {
+      httpClient.close();
+      throw Exception('get feedback failure');
     }
   }
 }

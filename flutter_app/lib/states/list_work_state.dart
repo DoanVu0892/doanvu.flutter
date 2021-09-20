@@ -17,7 +17,6 @@ class ListWorkStateSuccess extends ListWorkState {
   ListWorkStateSuccess(this.response);
 }
 
-class ListWorkStateFailure extends ListWorkState {
-  // final ResponseUpdateDentist response;
-  // ListWorkStateFailure(this.response);
-}
+class ListWorkStateLogout extends ListWorkState {}
+
+class ListWorkStateFailure extends ListWorkState {}

@@ -17,7 +17,6 @@ class LeaveScheduleSuccess extends LeaveScheduleState {
   const LeaveScheduleSuccess({this.response});
 }
 
-class LeaveScheduleFailure extends LeaveScheduleState {
-  final ResLeaveSchedule response;
-  const LeaveScheduleFailure({this.response});
-}
+class LeaveScheduleFailure extends LeaveScheduleState {}
+
+class LeaveScheduleLogout extends LeaveScheduleState {}

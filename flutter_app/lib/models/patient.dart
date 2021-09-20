@@ -26,7 +26,7 @@ class Patient extends Equatable {
 
   @override
   String toString() {
-    return '$name $phone'.toLowerCase() + '$name $phone'.toUpperCase();
+    return '$name $phone $id'.toLowerCase() + '$name $phone $id'.toUpperCase();
   }
 }
 

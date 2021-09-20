@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter_app/events/dentist_event.dart';
 import 'package:flutter_app/models/base_response.dart';
@@ -27,7 +28,10 @@ class DentistBloc extends Bloc<DentistEvent, DentistState> {
         yield DentistStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
-        yield DentistStateFailure();
+        if (exception == 'logout')
+          yield DentistStateLogout();
+        else
+          yield DentistStateFailure();
       }
     } else if (dentistEvent is DentistAddEventRequested) {
       yield DentistStateLoading();
@@ -40,7 +44,10 @@ class DentistBloc extends Bloc<DentistEvent, DentistState> {
         yield DentistAddStateSuccess(response: response);
       } catch (ex) {
         print('ex: $ex');
-        yield DentistStateFailure();
+        if (ex == 'logout')
+          yield DentistStateLogout();
+        else
+          yield DentistStateFailure();
       }
     } else if (dentistEvent is DentistEditEventRequested) {
       yield DentistStateLoading();
@@ -53,7 +60,10 @@ class DentistBloc extends Bloc<DentistEvent, DentistState> {
         yield DentistEditStateSuccess(response: response);
       } catch (ex) {
         print('ex: $ex');
-        yield DentistStateFailure();
+        if (ex == 'logout')
+          yield DentistStateLogout();
+        else
+          yield DentistStateFailure();
       }
     } else if (dentistEvent is DentistDelEventRequested) {
       yield DentistStateLoading();
@@ -65,7 +75,10 @@ class DentistBloc extends Bloc<DentistEvent, DentistState> {
         yield DentistDelStateSuccess(response: response);
       } catch (ex) {
         print('ex: $ex');
-        yield DentistStateFailure();
+        if (ex == 'logout')
+          yield DentistStateLogout();
+        else
+          yield DentistStateFailure();
       }
     }
   }

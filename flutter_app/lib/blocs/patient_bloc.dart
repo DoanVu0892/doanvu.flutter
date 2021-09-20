@@ -5,31 +5,41 @@ import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/states/patient_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PatientBloc extends Bloc<PatientEvent, PatientState>{
+class PatientBloc extends Bloc<PatientEvent, PatientState> {
   final AppRepository appRepository;
-  PatientBloc({this.appRepository}) : assert(appRepository != null), super(PatientStateInitial());
+  PatientBloc({this.appRepository})
+      : assert(appRepository != null),
+        super(PatientStateInitial());
 
   @override
   Stream<PatientState> mapEventToState(PatientEvent PatientEvent) async* {
-    if(PatientEvent is PatientEventRequested){
-        yield PatientStateLoading();
-        try{
-          final PatientResponse response = await new Future.delayed(const Duration(milliseconds: Constant.duration), (){
-            return appRepository.getPatients(PatientEvent.dentistId);
-          });
-          yield PatientStateSuccess(response: response);
-        }catch(exception){
-          print('ex: $exception');
-          yield PatientStateFailure();
-        }
-    } else if(PatientEvent is PatientEventSearch){
+    if (PatientEvent is PatientEventRequested) {
       yield PatientStateLoading();
-      try{
-        final PatientResponse response = await appRepository.searchPatient(PatientEvent.dentistId, PatientEvent.keyWord);
+      try {
+        final PatientResponse response = await new Future.delayed(
+            const Duration(milliseconds: Constant.duration), () {
+          return appRepository.getPatients(PatientEvent.dentistId);
+        });
         yield PatientStateSuccess(response: response);
-      }catch(exception){
+      } catch (exception) {
         print('ex: $exception');
-        yield PatientStateFailure();
+        if (exception == 'logout')
+          yield PatientStateLogout();
+        else
+          yield PatientStateFailure();
+      }
+    } else if (PatientEvent is PatientEventSearch) {
+      yield PatientStateLoading();
+      try {
+        final PatientResponse response = await appRepository.searchPatient(
+            PatientEvent.dentistId, PatientEvent.keyWord);
+        yield PatientStateSuccess(response: response);
+      } catch (exception) {
+        print('ex: $exception');
+        if (exception == 'logout')
+          yield PatientStateLogout();
+        else
+          yield PatientStateFailure();
       }
     }
   }

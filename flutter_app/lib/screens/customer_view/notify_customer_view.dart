@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/notify_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/notify_event.dart';
 import 'package:flutter_app/models/notify.dart';
 import 'package:flutter_app/states/notify_state.dart';
@@ -18,6 +19,8 @@ class _NotifyCustomerViewState extends State<NotifyCustomerView> {
 
   @override
   Widget build(BuildContext context) {
+    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    print(data.size.shortestSide);
     return Container(
       child: BlocConsumer<NotifyBloc, NotifyState>(
         listener: (context, state) {
@@ -25,6 +28,10 @@ class _NotifyCustomerViewState extends State<NotifyCustomerView> {
             setState(() {
               dataNotify = state.response.dataNotify;
             });
+          }
+          if (state is NotifyStateLogout) {
+            // Navigator.popAndPushNamed(context, '/login');
+            Utils.gotoLogin(context);
           }
         },
         builder: (context, state) {
@@ -45,7 +52,7 @@ class _NotifyCustomerViewState extends State<NotifyCustomerView> {
                     final notify = dataNotify[index];
                     return Card(
                       child: Container(
-                        margin: EdgeInsets.all(10),
+                        margin: EdgeInsets.all(8),
                         child: Row(
                           children: <Widget>[
                             Container(
@@ -58,8 +65,9 @@ class _NotifyCustomerViewState extends State<NotifyCustomerView> {
                                   color: Colors.white,
                                 )),
                             Container(
-                              width: 300,
-                              margin: EdgeInsets.only(left: 10, right: 10),
+                              width:
+                                  data.size.shortestSide <= 375.0 ? 260 : 300,
+                              margin: EdgeInsets.only(left: 5, right: 5),
                               alignment: Alignment.centerLeft,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

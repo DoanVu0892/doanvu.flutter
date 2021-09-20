@@ -24,6 +24,8 @@ class ScheduleStateSuccess extends ScheduleState {
 
 class ScheduleStateFailure extends ScheduleState {}
 
+class ScheduleStateLogout extends ScheduleState {}
+
 class ScheduleAddStateLoading extends ScheduleState {}
 
 class ScheduleAddStateSuccess extends ScheduleState {
@@ -34,13 +36,7 @@ class ScheduleAddStateSuccess extends ScheduleState {
   List<Object> get props => [response];
 }
 
-class ScheduleAddStateFailure extends ScheduleState {
-  // final ScheduleAddResponse response;
-  // const ScheduleAddStateFailure({@required this.response});
-  // @override
-  // // TODO: implement props
-  // List<Object> get props => [response];
-}
+class ScheduleAddStateFailure extends ScheduleState {}
 
 class ScheduleDelStateLoading extends ScheduleState {}
 
@@ -52,10 +48,4 @@ class ScheduleDelStateSuccess extends ScheduleState {
   List<Object> get props => [response];
 }
 
-class ScheduleDelStateFailure extends ScheduleState {
-  final ScheduleDelResponse response;
-  const ScheduleDelStateFailure({@required this.response});
-  @override
-  // TODO: implement props
-  List<Object> get props => [response];
-}
+class ScheduleDelStateFailure extends ScheduleState {}

@@ -6,6 +6,7 @@ import 'package:flutter_app/customs/block_cs_view.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_app/models/user.dart';
@@ -145,6 +146,11 @@ class _BookViewState extends State<BookView> {
                     scheduleList = state.response.data;
                   });
                 }
+                if (state is ScheduleStateLogout) {
+                  // Navigator.popAndPushNamed(context, '/login');
+                  Utils.gotoLogin(context);
+                }
+
                 if (state is ScheduleStateFailure) {
                   _showSnackBar('lấy lịch lỗi', false);
                 }

@@ -8,6 +8,7 @@ import 'package:flutter_app/blocs/schedule_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/dentist_event.dart';
 import 'package:flutter_app/events/leave_schedule_event.dart';
 import 'package:flutter_app/events/schedule_event.dart';
@@ -136,6 +137,10 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                     if (state is LeaveScheduleFailure) {
                       _showSnackBar('Đặt lịch nghỉ lỗi', false);
                     }
+                    if (state is LeaveScheduleLogout) {
+                      // Navigator.popAndPushNamed(context, '/login');
+                      Utils.gotoLogin(context);
+                    }
                     // new Future.delayed(
                     //     const Duration(milliseconds: Constant.duration), () {
                     //   Navigator.pop(context);
@@ -174,6 +179,10 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
               if (clinicList == null || clinicList.isEmpty) {
                 setState(() {});
               }
+            }
+            if (state is ClinicStateLogout) {
+              // Navigator.popAndPushNamed(context, '/login');
+              Utils.gotoLogin(context);
             }
           },
           builder: (context, state) {
@@ -288,6 +297,10 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                 if (dentistData == null || dentistData.isEmpty) {
                   _showSnackBar('Không có dữ liệu!!!', false);
                 }
+              }
+              if (state is DentistStateLogout) {
+                // Navigator.popAndPushNamed(context, '/login');
+                Utils.gotoLogin(context);
               }
             },
             builder: (context, state) {

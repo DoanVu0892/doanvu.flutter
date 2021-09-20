@@ -18,24 +18,17 @@ class ClinicStateSuccess extends ClinicState {
   const ClinicStateSuccess({@required this.response})
       : assert(response != null);
   @override
-  // TODO: implement props
   List<Object> get props => [response];
 }
 
-class ClinicStateFailure extends ClinicState {
-  final ClinicResponse response;
-  const ClinicStateFailure({@required this.response})
-      : assert(response != null);
-  @override
-  // TODO: implement props
-  List<Object> get props => [response];
-}
+class ClinicStateFailure extends ClinicState {}
+
+class ClinicStateLogout extends ClinicState {}
 
 class ClinicAddStateSuccess extends ClinicState {
   final ClinicAddResponse response;
   const ClinicAddStateSuccess({this.response}) : assert(response != null);
   @override
-  // TODO: implement props
   List<Object> get props => [];
 }
 
@@ -43,7 +36,6 @@ class ClinicEditStateSuccess extends ClinicState {
   final ClinicEditResponse response;
   const ClinicEditStateSuccess({this.response}) : assert(response != null);
   @override
-  // TODO: implement props
   List<Object> get props => [];
 }
 
@@ -51,6 +43,5 @@ class ClinicDelStateSuccess extends ClinicState {
   final ClinicEditResponse response;
   const ClinicDelStateSuccess({this.response}) : assert(response != null);
   @override
-  // TODO: implement props
   List<Object> get props => [];
 }

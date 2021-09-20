@@ -20,10 +20,6 @@ class UpdateDentistWithClinicSuccess extends UpdateDentistWithClinicState {
   List<Object> get props => [response];
 }
 
-class UpdateDentistWithClinicFailure extends UpdateDentistWithClinicState {
-  final BaseResponse response;
-  UpdateDentistWithClinicFailure({this.response});
-  @override
-  // TODO: implement props
-  List<Object> get props => [response];
-}
+class UpdateDentistWithClinicFailure extends UpdateDentistWithClinicState {}
+
+class UpdateDentistWithClinicLogout extends UpdateDentistWithClinicState {}

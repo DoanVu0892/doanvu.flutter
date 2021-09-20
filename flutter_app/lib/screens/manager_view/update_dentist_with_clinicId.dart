@@ -193,6 +193,9 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
                                 _showSnackBar('Không có dữ liệu!!!', false);
                               }
                             }
+                            if (state is ListWorkStateLogout) {
+                              Navigator.popAndPushNamed(context, '/login');
+                            }
                           },
                           builder: (context, state) {
                             if (state is ListWorkStateLoading) {
@@ -375,6 +378,10 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
                           _showSnackBar('Cập nhật không thành công', false);
                           BlocProvider.of<ListWorkBloc>(context)
                               .add(ListWorkEventRequested());
+                        }
+
+                        if (state is UpdateDentistWithClinicLogout) {
+                          Navigator.popAndPushNamed(context, '/login');
                         }
                       },
                       builder: (context, state) {

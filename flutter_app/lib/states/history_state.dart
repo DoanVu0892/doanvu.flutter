@@ -12,13 +12,9 @@ class HistoryStateInitial extends HistoryState {}
 
 class HistoryStateLoading extends HistoryState {}
 
-class HistoryStateFailure extends HistoryState {
-  final HistoryResponse response;
-  HistoryStateFailure({this.response}) : assert(response != null);
-  @override
-  // TODO: implement props
-  List<Object> get props => [response];
-}
+class HistoryStateFailure extends HistoryState {}
+
+class HistoryStateLogout extends HistoryState {}
 
 class HistoryStateSuccess extends HistoryState {
   final HistoryResponse response;

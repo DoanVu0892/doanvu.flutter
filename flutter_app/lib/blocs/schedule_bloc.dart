@@ -27,7 +27,10 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         yield ScheduleStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
-        yield ScheduleStateFailure();
+        if (exception == 'logout')
+          yield ScheduleStateLogout();
+        else
+          yield ScheduleStateFailure();
       }
     } else if (scheduleEvent is ScheduleAddEventRequested) {
       yield ScheduleStateLoading();
@@ -44,7 +47,10 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         yield ScheduleAddStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
-        yield ScheduleAddStateFailure();
+        if (exception == 'logout')
+          yield ScheduleStateLogout();
+        else
+          yield ScheduleAddStateFailure();
       }
     } else if (scheduleEvent is ScheduleDelEventRequested) {
       yield ScheduleStateLoading();
@@ -57,7 +63,10 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         yield ScheduleDelStateSuccess(response: response);
       } catch (exception) {
         print('ex: $exception');
-        yield ScheduleDelStateFailure();
+        if (exception == 'logout')
+          yield ScheduleStateLogout();
+        else
+          yield ScheduleDelStateFailure();
       }
     }
   }

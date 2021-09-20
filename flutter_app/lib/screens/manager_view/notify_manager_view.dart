@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/blocs/notify_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/notify_event.dart';
 import 'package:flutter_app/models/notify.dart';
 import 'package:flutter_app/states/notify_state.dart';
@@ -18,6 +19,7 @@ class _NotifyManagerViewState extends State<NotifyManagerView> {
 
   @override
   Widget build(BuildContext context) {
+    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -70,6 +72,10 @@ class _NotifyManagerViewState extends State<NotifyManagerView> {
                 dataNotify = state.response.dataNotify;
               });
             }
+            if (state is NotifyStateLogout) {
+              // Navigator.popAndPushNamed(context, '/login');
+              Utils.gotoLogin(context);
+            }
           },
           builder: (context, state) {
             if (state is NotifyStateLoading) {
@@ -93,7 +99,7 @@ class _NotifyManagerViewState extends State<NotifyManagerView> {
                           child: Row(
                             children: <Widget>[
                               Container(
-                                  padding: EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(100),
                                       color: Colors.blueAccent),
@@ -102,8 +108,9 @@ class _NotifyManagerViewState extends State<NotifyManagerView> {
                                     color: Colors.white,
                                   )),
                               Container(
-                                width: 300,
-                                margin: EdgeInsets.only(left: 10, right: 10),
+                                width:
+                                    data.size.shortestSide <= 375 ? 260 : 300,
+                                margin: EdgeInsets.only(left: 5, right: 5),
                                 alignment: Alignment.centerLeft,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

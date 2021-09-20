@@ -24,7 +24,10 @@ class ListWorkBloc extends Bloc<ListWorkEvent, ListWorkState> {
         yield ListWorkStateSuccess(response);
       } catch (e) {
         print(e);
-        yield ListWorkStateFailure();
+        if (e == 'logout')
+          yield ListWorkStateLogout();
+        else
+          yield ListWorkStateFailure();
       }
     }
   }

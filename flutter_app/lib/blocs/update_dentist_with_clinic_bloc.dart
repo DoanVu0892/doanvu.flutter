@@ -27,7 +27,10 @@ class UpdateDentistWithClinicBloc
         yield UpdateDentistWithClinicSuccess(response: response);
       } catch (e) {
         print(e);
-        yield UpdateDentistWithClinicFailure();
+        if (e == 'logout')
+          yield UpdateDentistWithClinicLogout();
+        else
+          yield UpdateDentistWithClinicFailure();
       }
     }
   }

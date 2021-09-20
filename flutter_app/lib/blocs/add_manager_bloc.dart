@@ -5,29 +5,38 @@ import 'package:flutter_app/repositories/app_repository.dart';
 import 'package:flutter_app/states/add_manager_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UserManagerBloc extends Bloc<UserManagerEvent, UserManagerState>{
+class UserManagerBloc extends Bloc<UserManagerEvent, UserManagerState> {
   final AppRepository appRepository;
-  UserManagerBloc({this.appRepository}) : assert(appRepository != null), super(UserManagerStateInitial());
+  UserManagerBloc({this.appRepository})
+      : assert(appRepository != null),
+        super(UserManagerStateInitial());
 
   @override
-  Stream<UserManagerState> mapEventToState(UserManagerEvent userManagerEvent) async* {
-    if(userManagerEvent is UserManagerEventRequested){
+  Stream<UserManagerState> mapEventToState(
+      UserManagerEvent userManagerEvent) async* {
+    if (userManagerEvent is UserManagerEventRequested) {
       yield UserManagerStateLoading();
-      try{
-        final BaseResponse response =
-        await new Future.delayed(const Duration(milliseconds: Constant.duration), () {
-          return appRepository.addUserManager(userManagerEvent.phone, userManagerEvent.password, userManagerEvent.name, '${userManagerEvent.clinicId}');
+      try {
+        final BaseResponse response = await new Future.delayed(
+            const Duration(milliseconds: Constant.duration), () {
+          return appRepository.addUserManager(
+              userManagerEvent.phone,
+              userManagerEvent.password,
+              userManagerEvent.name,
+              '${userManagerEvent.clinicId}');
         });
-        if(response.status == 'ok'){
+        if (response.status == 'ok') {
           yield UserManagerStateSuccess();
-        }else{
+        } else {
           yield UserManagerStateFailure();
         }
-      }catch(e){
+      } catch (e) {
         print(e);
-        yield UserManagerStateFailure();
+        if (e == 'logout')
+          yield UserManagerStateLogout();
+        else
+          yield UserManagerStateFailure();
       }
     }
   }
-
 }

@@ -3,7 +3,7 @@ import 'package:flutter_app/models/base_response.dart';
 
 class FeedBack extends Equatable {
   final String id;
-  final int patientId;
+  final String patientId;
   final String patientName;
   final String title;
   final String content;
@@ -26,7 +26,7 @@ class FeedBack extends Equatable {
   factory FeedBack.fromJson(dynamic jsonObject) {
     return FeedBack(
       id: jsonObject["_id"] ?? '',
-      patientId: jsonObject['patientId'] ?? 0,
+      patientId: jsonObject['patientId'] ?? '',
       patientName: jsonObject['patientName'] ?? '',
       title: jsonObject['title'] ?? '',
       content: jsonObject['content'] ?? '',

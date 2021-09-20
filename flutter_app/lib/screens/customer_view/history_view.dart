@@ -34,6 +34,9 @@ class _HistoryViewState extends State<HistoryView> {
           if (state is HistoryStateFailure) {
             _showSnackBar("get Schedule failure", false);
           }
+          if (state is HistoryStateLogout) {
+            Navigator.popAndPushNamed(context, '/login');
+          }
         },
         builder: (context, state) {
           if (state is HistoryStateLoading) {

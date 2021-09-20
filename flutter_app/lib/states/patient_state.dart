@@ -20,10 +20,6 @@ class PatientStateSuccess extends PatientState {
   List<Object> get props => [response];
 }
 
-class PatientStateFailure extends PatientState {
-  final PatientResponse response;
-  const PatientStateFailure({this.response});
-  @override
-  // TODO: implement props
-  List<Object> get props => [response];
-}
+class PatientStateFailure extends PatientState {}
+
+class PatientStateLogout extends PatientState {}

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_app/models/base_response.dart';
 import 'package:flutter_app/models/feedback.dart';
 
 abstract class FeedBackState extends Equatable {
@@ -17,4 +18,11 @@ class FeedBackStateSuccess extends FeedBackState {
   FeedBackStateSuccess({this.responseFeedback});
 }
 
+class FeedBackAddStateSuccess extends FeedBackState {
+  final BaseResponse responseFeedback;
+  FeedBackAddStateSuccess({this.responseFeedback});
+}
+
 class FeedBackStateFailure extends FeedBackState {}
+
+class FeedBackStateLogout extends FeedBackState {}
