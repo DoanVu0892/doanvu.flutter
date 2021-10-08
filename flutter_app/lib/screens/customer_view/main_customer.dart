@@ -177,48 +177,33 @@ class _MainCustomerScreenState extends State<MainCustomerScreen>
             ),
         child: Scaffold(
           appBar: AppBar(
-            // automaticallyImplyLeading: false,
-            title: Center(
-              child: Container(
-                margin: EdgeInsets.only(right: 40),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+              // automaticallyImplyLeading: false,
+              title: Center(
+                child: Container(
+                  margin: EdgeInsets.only(right: 40),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
-            backgroundColor: CustomTheme.loginGradientStart,
-          ),
+              backgroundColor: CustomTheme.colorEnd),
           body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: <Color>[
-                    CustomTheme.loginGradientStart,
-                    CustomTheme.loginGradientEnd
-                  ],
-                  begin: FractionalOffset(0.0, 0.0),
-                  end: FractionalOffset(1.0, 1.0),
-                  stops: <double>[0.0, 1.0],
-                  tileMode: TileMode.clamp),
+              gradient: CustomTheme.primaryGradient,
             ),
             child: this.getBody(),
           ),
           bottomNavigationBar: BottomNavigationBar(
             iconSize: 30,
-            selectedIconTheme: IconThemeData(
-                // color: CustomTheme.loginGradientEnd,
-                opacity: 1.0,
-                size: 35),
-            unselectedIconTheme: IconThemeData(
-                // color: Colors.black45,
-                opacity: 0.5,
-                size: 25),
+            selectedIconTheme: IconThemeData(opacity: 1.0, size: 35),
+            unselectedIconTheme: IconThemeData(opacity: 0.5, size: 25),
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.access_time),

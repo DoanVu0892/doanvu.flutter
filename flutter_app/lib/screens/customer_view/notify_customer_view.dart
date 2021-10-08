@@ -115,25 +115,17 @@ class _NotifyCustomerViewState extends State<NotifyCustomerView> {
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: CustomTheme.loginGradientStart,
+                    color: CustomTheme.colorStart,
                     offset: Offset(1.0, 6.0),
                     blurRadius: 20.0,
                   ),
                   BoxShadow(
-                    color: CustomTheme.loginGradientEnd,
+                    color: CustomTheme.colorEnd,
                     offset: Offset(1.0, 6.0),
                     blurRadius: 20.0,
                   ),
                 ],
-                gradient: LinearGradient(
-                    colors: <Color>[
-                      CustomTheme.loginGradientEnd,
-                      CustomTheme.loginGradientStart
-                    ],
-                    begin: FractionalOffset(0.2, 0.2),
-                    end: FractionalOffset(1.0, 1.0),
-                    stops: <double>[0.0, 1.0],
-                    tileMode: TileMode.clamp),
+                gradient: CustomTheme.primaryGradient,
               ),
               child: MaterialButton(
                 padding: EdgeInsets.symmetric(horizontal: 45),

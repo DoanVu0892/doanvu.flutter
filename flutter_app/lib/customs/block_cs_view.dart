@@ -6,6 +6,7 @@ import 'package:flutter_app/events/schedule_event.dart';
 import 'package:flutter_app/models/patient.dart';
 import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oktoast/oktoast.dart';
 
 // ignore: must_be_immutable
 class BlockCSItem extends StatefulWidget {
@@ -98,36 +99,50 @@ class _BlockCSItemState extends State<BlockCSItem> {
                         }),
               }
             : {
-                (widget.schedule.booked == 'booked')
-                    ? {
-                        widget.onChange,
-                        print('note: ${widget.schedule.block.note}'),
-                        DialogUtils.showCustomDialog(context,
-                            okBtnText: 'Hủy lịch',
-                            title: 'Hủy lịch ${widget.schedule.time}',
-                            child: TextField(
-                              maxLines: null,
-                              decoration: InputDecoration(
-                                hintText: 'Nhập ghi chú',
-                                labelText: 'Ghi chú',
-                                border: OutlineInputBorder(),
-                                labelStyle: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              controller: noteController,
-                            ),
-                            okBtnFunction: () => {
-                                  print('state: ${widget.schedule.block.id}'),
-                                  BlocProvider.of<ScheduleBloc>(context).add(
-                                      ScheduleDelEventRequested(
-                                          bookedId: widget.schedule.block.id,
-                                          reason: noteController.text)),
-                                  Navigator.of(context).pop(),
-                                }),
-                      }
-                    : {
-                        print(widget.schedule.booked),
-                      }
+                print(
+                    'id1: ${widget.patientId} id2: ${widget.schedule.block.patientId}'),
+                if (widget.patientId.toString() ==
+                    widget.schedule.block.patientId.toString())
+                  {
+                    (widget.schedule.booked == 'booked')
+                        ? {
+                            widget.onChange,
+                            print('note: ${widget.schedule.block.note}'),
+                            DialogUtils.showCustomDialog(context,
+                                okBtnText: 'Hủy lịch',
+                                title: 'Hủy lịch ${widget.schedule.time}',
+                                child: TextField(
+                                  maxLines: null,
+                                  decoration: InputDecoration(
+                                    hintText: 'Nhập ghi chú',
+                                    labelText: 'Ghi chú',
+                                    border: OutlineInputBorder(),
+                                    labelStyle: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  controller: noteController,
+                                ),
+                                okBtnFunction: () => {
+                                      print(
+                                          'state: ${widget.schedule.block.id}'),
+                                      BlocProvider.of<ScheduleBloc>(context)
+                                          .add(ScheduleDelEventRequested(
+                                              bookedId:
+                                                  widget.schedule.block.id,
+                                              reason: noteController.text)),
+                                      Navigator.of(context).pop(),
+                                    }),
+                          }
+                        : {
+                            print(widget.schedule.booked),
+                          }
+                  }
+                else
+                  {
+                    showToast(
+                        'Không thể sửa lịch của ${widget.schedule.block.patientId}'),
+                  }
               });
   }
 }

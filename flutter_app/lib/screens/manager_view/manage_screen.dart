@@ -61,7 +61,7 @@ class _ManageScreenState extends State<ManageScreen> {
                 child: Center(child: Icon(Icons.arrow_back_ios))),
           ),
         ),
-        backgroundColor: CustomTheme.loginGradientStart,
+        backgroundColor: CustomTheme.colorEnd,
         title: Center(
           child: Container(
             margin: EdgeInsets.only(right: 50),
@@ -81,15 +81,7 @@ class _ManageScreenState extends State<ManageScreen> {
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.only(bottom: 20),
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              colors: <Color>[
-                CustomTheme.loginGradientStart,
-                CustomTheme.loginGradientEnd
-              ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 1.0),
-              stops: <double>[0.0, 1.0],
-              tileMode: TileMode.clamp),
+          gradient: CustomTheme.primaryGradient,
         ),
         child: BlocConsumer<ClinicBloc, ClinicState>(
           listener: (context, state) {
@@ -180,7 +172,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(100),
-                                    color: CustomTheme.loginGradientEnd),
+                                    color: CustomTheme.colorEnd),
                                 child: Icon(
                                   Icons.home,
                                   color: Colors.white,
@@ -374,212 +366,6 @@ class _ManageScreenState extends State<ManageScreen> {
                               });
                             },
                           ),
-                          /*child: Slidable(
-                            actionPane: SlidableDrawerActionPane(),
-                            actionExtentRatio: 1 / 5,
-                            child: ListTile(
-                              leading: Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                      color: CustomTheme.loginGradientEnd),
-                                  child: Icon(
-                                    Icons.home,
-                                    color: Colors.white,
-                                  )),
-                              title: Text(clinic.name),
-                              subtitle: Text(clinic.address),
-                              onTap: () {
-                                BlocProvider.of<DentistBloc>(context)
-                                    .add(DentistEventRequested());
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DentistScreen(clinicId: clinic.id)));
-                              },
-                            ),
-                            secondaryActions: <Widget>[
-                              new IconSlideAction(
-                                caption: 'Sửa',
-                                color: Colors.black45,
-                                icon: Icons.edit,
-                                onTap: () => {
-                                  nameController.text = clinic.name,
-                                  phoneController.text = clinic.phone,
-                                  addressController.text = clinic.address,
-                                  DialogUtils.showCustomDialog(context,
-                                      title: 'Sửa thông tin chi nhánh',
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                        },
-                                        child: Container(
-                                          height: 305,
-                                          width: 300,
-                                          padding: EdgeInsets.all(5),
-                                          child: Column(
-                                            children: <Widget>[
-                                              Expanded(
-                                                flex: 1,
-                                                child: Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 5),
-                                                        alignment:
-                                                            Alignment.centerLeft,
-                                                        child: Text(
-                                                          'Tên chi nhánh',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              fontSize: 18),
-                                                        ),
-                                                      ),
-                                                      TextField(
-                                                        maxLines: 1,
-                                                        decoration: InputDecoration(
-                                                          hintText: clinic.name,
-                                                          border:
-                                                              OutlineInputBorder(),
-                                                          labelStyle: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight.bold),
-                                                        ),
-                                                        controller: nameController,
-                                                        focusNode: nameFocus,
-                                                        onSubmitted: (_) {
-                                                          phoneFocus.requestFocus();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 5, top: 5),
-                                                        alignment:
-                                                            Alignment.centerLeft,
-                                                        child: Text(
-                                                          'Số điện thoại',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              fontSize: 18),
-                                                        ),
-                                                      ),
-                                                      TextField(
-                                                        maxLines: 1,
-                                                        keyboardType:
-                                                            TextInputType.phone,
-                                                        decoration: InputDecoration(
-                                                          hintText: clinic.phone,
-                                                          border:
-                                                              OutlineInputBorder(),
-                                                          labelStyle: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight.bold),
-                                                        ),
-                                                        controller: phoneController,
-                                                        focusNode: phoneFocus,
-                                                        onSubmitted: (_) {
-                                                          addressFocus
-                                                              .requestFocus();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Container(
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 5, top: 5),
-                                                        alignment:
-                                                            Alignment.centerLeft,
-                                                        child: Text(
-                                                          'Địa chỉ',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              fontSize: 18),
-                                                        ),
-                                                      ),
-                                                      TextField(
-                                                        maxLines: 1,
-                                                        decoration: InputDecoration(
-                                                          hintText: clinic.address,
-                                                          border:
-                                                              OutlineInputBorder(),
-                                                          labelStyle: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight.bold),
-                                                        ),
-                                                        controller:
-                                                            addressController,
-                                                        focusNode: addressFocus,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      okBtnText: 'Lưu', okBtnFunction: () {
-                                    BlocProvider.of<ClinicBloc>(context).add(
-                                        ClinicEditEventRequested(
-                                            clinicId: clinic.id,
-                                            name: nameController.text,
-                                            phone: phoneController.text,
-                                            address: addressController.text));
-                                    Navigator.of(context).pop();
-                                  })
-                                },
-                              ),
-                              new IconSlideAction(
-                                caption: 'Xóa',
-                                color: Colors.red,
-                                icon: Icons.delete,
-                                onTap: () => {
-                                  print('onDel'),
-                                  DialogUtils.showCustomDialog(context,
-                                      title: 'Cảnh báo',
-                                      titleStyle: TextStyle(color: Colors.red),
-                                      child: Text(
-                                        'Bạn muốn xóa chi nhánh \'${clinic.name}\' khỏi danh sách?',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w400),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      okBtnText: 'Xóa', okBtnFunction: () {
-                                    BlocProvider.of<ClinicBloc>(context).add(
-                                      ClinicDelEventRequested(clinicId: clinic.id),
-                                    );
-                                    Navigator.of(context).pop();
-                                  })
-                                },
-                              ),
-                            ],
-                          ),*/
                         );
                       },
                     ),
@@ -600,25 +386,17 @@ class _ManageScreenState extends State<ManageScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: CustomTheme.loginGradientStart,
+                      color: CustomTheme.colorStart,
                       offset: Offset(1.0, 6.0),
                       blurRadius: 20.0,
                     ),
                     BoxShadow(
-                      color: CustomTheme.loginGradientEnd,
+                      color: CustomTheme.colorEnd,
                       offset: Offset(1.0, 6.0),
                       blurRadius: 20.0,
                     ),
                   ],
-                  gradient: LinearGradient(
-                      colors: <Color>[
-                        CustomTheme.loginGradientEnd,
-                        CustomTheme.loginGradientStart
-                      ],
-                      begin: FractionalOffset(0.2, 0.2),
-                      end: FractionalOffset(1.0, 1.0),
-                      stops: <double>[0.0, 1.0],
-                      tileMode: TileMode.clamp),
+                  gradient: CustomTheme.primaryGradient,
                 ),
                 child: MaterialButton(
                   padding: EdgeInsets.symmetric(horizontal: 45),

@@ -5,6 +5,7 @@ import 'package:flutter_app/blocs/update_dentist_with_clinic_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/list_work_event.dart';
 import 'package:flutter_app/events/update_dentist_with_clinic_event.dart';
 import 'package:flutter_app/models/dentist_update.dart';
@@ -58,7 +59,7 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
             ),
           ),
         ),
-        backgroundColor: CustomTheme.loginGradientStart,
+        backgroundColor: CustomTheme.colorEnd,
         actions: [
           Container(
             margin: EdgeInsets.only(right: 5),
@@ -101,15 +102,7 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: <Color>[
-                  CustomTheme.loginGradientStart,
-                  CustomTheme.loginGradientEnd
-                ],
-                begin: FractionalOffset(0.0, 0.0),
-                end: FractionalOffset(1.0, 1.0),
-                stops: <double>[0.0, 1.0],
-                tileMode: TileMode.clamp),
+            gradient: CustomTheme.primaryGradient,
           ),
           child: Stack(
             children: <Widget>[
@@ -194,7 +187,8 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
                               }
                             }
                             if (state is ListWorkStateLogout) {
-                              Navigator.popAndPushNamed(context, '/login');
+                              // Navigator.popAndPushNamed(context, '/login');
+                              Utils.gotoLogin(context);
                             }
                           },
                           builder: (context, state) {
@@ -381,7 +375,8 @@ class _UpdateDentistWithCliniIdState extends State<UpdateDentistWithCliniId> {
                         }
 
                         if (state is UpdateDentistWithClinicLogout) {
-                          Navigator.popAndPushNamed(context, '/login');
+                          // Navigator.popAndPushNamed(context, '/login');
+                          Utils.gotoLogin(context);
                         }
                       },
                       builder: (context, state) {

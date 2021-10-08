@@ -4,6 +4,7 @@ import 'package:flutter_app/blocs/feedback_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/feedback_event.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/states/feedback_state.dart';
@@ -42,6 +43,10 @@ class _FeedBackViewState extends State<FeedBackView> {
           if (state is FeedBackStateFailure) {
             _showSnackBar('Gửi góp ý lỗi', false);
           }
+          if (state is FeedBackStateLogout) {
+            // Navigator.popAndPushNamed(context, '/login');
+            Utils.gotoLogin(context);
+          }
         },
         builder: (context, state) {
           if (state is FeedBackStateLoading) {
@@ -58,39 +63,43 @@ class _FeedBackViewState extends State<FeedBackView> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    // Container(
+                    //     margin: EdgeInsets.all(10),
+                    //     child: Text(
+                    //       'Tiêu đề',
+                    //       style: TextStyle(
+                    //           fontSize: 18, fontWeight: FontWeight.w500),
+                    //     )),
+                    // Card(
+                    //   child: Container(
+                    //     margin: EdgeInsets.only(left: 15, right: 15),
+                    //     child: TextField(
+                    //       focusNode: focusTitle,
+                    //       controller: myTitleController,
+                    //       style: const TextStyle(
+                    //           fontFamily: 'WorkSansSemiBold',
+                    //           fontSize: 20.0,
+                    //           color: Colors.black),
+                    //       decoration: InputDecoration(
+                    //         border: InputBorder.none,
+                    //         hintText: 'Nhập tiêu đề',
+                    //         hintStyle: const TextStyle(
+                    //             fontFamily: 'WorkSansSemiBold', fontSize: 17.0),
+                    //       ),
+                    //       textInputAction: TextInputAction.go,
+                    //     ),
+                    //   ),
+                    // ),
                     Container(
+                        alignment: Alignment.center,
                         margin: EdgeInsets.all(10),
                         child: Text(
-                          'Tiêu đề',
+                          'Những ý kiến đóng góp của bạn sẽ giúp chúng tôi hoàn thiện chất lượng dịch vụ!',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                        )),
-                    Card(
-                      child: Container(
-                        margin: EdgeInsets.only(left: 15, right: 15),
-                        child: TextField(
-                          focusNode: focusTitle,
-                          controller: myTitleController,
-                          style: const TextStyle(
-                              fontFamily: 'WorkSansSemiBold',
-                              fontSize: 20.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Nhập tiêu đề',
-                            hintStyle: const TextStyle(
-                                fontFamily: 'WorkSansSemiBold', fontSize: 17.0),
-                          ),
-                          textInputAction: TextInputAction.go,
-                        ),
-                      ),
-                    ),
-                    Container(
-                        margin: EdgeInsets.all(10),
-                        child: Text(
-                          'Tiêu đề',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
+                          textAlign: TextAlign.center,
                         )),
                     Card(
                       child: Container(
@@ -106,7 +115,7 @@ class _FeedBackViewState extends State<FeedBackView> {
                               color: Colors.black),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Nhập tiêu đề',
+                            hintText: 'Nhập nội dung',
                             hintStyle: const TextStyle(
                                 fontFamily: 'WorkSansSemiBold', fontSize: 17.0),
                           ),
@@ -122,32 +131,24 @@ class _FeedBackViewState extends State<FeedBackView> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                            color: CustomTheme.loginGradientStart,
+                            color: CustomTheme.colorStart,
                             offset: Offset(1.0, 6.0),
                             blurRadius: 20.0,
                           ),
                           BoxShadow(
-                            color: CustomTheme.loginGradientEnd,
+                            color: CustomTheme.colorEnd,
                             offset: Offset(1.0, 6.0),
                             blurRadius: 20.0,
                           ),
                         ],
-                        gradient: LinearGradient(
-                            colors: <Color>[
-                              CustomTheme.loginGradientEnd,
-                              CustomTheme.loginGradientStart
-                            ],
-                            begin: FractionalOffset(0.2, 0.2),
-                            end: FractionalOffset(1.0, 1.0),
-                            stops: <double>[0.0, 1.0],
-                            tileMode: TileMode.clamp),
+                        gradient: CustomTheme.primaryGradient,
                       ),
                       child: MaterialButton(
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 42.0),
+                          child: Container(
+                            // margin: EdgeInsets.symmetric(
+                            //     vertical: 10.0, horizontal: 42.0),
                             child: Text(
                               'Gửi góp ý',
                               style: TextStyle(
@@ -157,15 +158,13 @@ class _FeedBackViewState extends State<FeedBackView> {
                             ),
                           ),
                           onPressed: () {
-                            if (myTitleController.text != null &&
-                                myTitleController.text != '' &&
-                                myContentController.text != null &&
+                            if (myContentController.text != null &&
                                 myContentController.text != '') {
                               BlocProvider.of<FeedBackBloc>(context).add(
                                   FeedbackAddEventRequested(
                                       patientId: widget.patient.id,
                                       patientName: widget.patient.name,
-                                      title: myTitleController.text,
+                                      title: 'Phản hồi',
                                       content: myContentController.text));
                             } else {
                               _showSnackBar(

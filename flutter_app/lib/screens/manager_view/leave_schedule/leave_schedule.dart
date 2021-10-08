@@ -103,7 +103,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
             ),
           ),
         ),
-        backgroundColor: CustomTheme.loginGradientStart,
+        backgroundColor: CustomTheme.colorEnd,
       ),
       body: GestureDetector(
         onTap: () {
@@ -113,15 +113,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: <Color>[
-                  CustomTheme.loginGradientStart,
-                  CustomTheme.loginGradientEnd
-                ],
-                begin: FractionalOffset(0.0, 0.0),
-                end: FractionalOffset(1.0, 1.0),
-                stops: <double>[0.0, 1.0],
-                tileMode: TileMode.clamp),
+            gradient: CustomTheme.primaryGradient,
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -200,25 +192,17 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: CustomTheme.loginGradientStart,
+                          color: CustomTheme.colorStart,
                           offset: Offset(1.0, 6.0),
                           blurRadius: 20.0,
                         ),
                         BoxShadow(
-                          color: CustomTheme.loginGradientEnd,
+                          color: CustomTheme.colorEnd,
                           offset: Offset(1.0, 6.0),
                           blurRadius: 20.0,
                         ),
                       ],
-                      gradient: LinearGradient(
-                          colors: <Color>[
-                            CustomTheme.loginGradientEnd,
-                            CustomTheme.loginGradientStart
-                          ],
-                          begin: FractionalOffset(0.2, 0.2),
-                          end: FractionalOffset(1.0, 1.0),
-                          stops: <double>[0.0, 1.0],
-                          tileMode: TileMode.clamp),
+                      gradient: CustomTheme.primaryGradient,
                     ),
                     child: MaterialButton(
                       padding: EdgeInsets.symmetric(horizontal: 45),
@@ -524,7 +508,7 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
                 }
               },
               isSelected: isSelected,
-              fillColor: CustomTheme.loginGradientEnd,
+              fillColor: CustomTheme.colorStart,
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
               borderColor: Colors.white,
               selectedBorderColor: Colors.white,
@@ -560,29 +544,21 @@ class _LeaveScheduleViewState extends State<LeaveScheduleView> {
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: CustomTheme.loginGradientStart,
+                color: CustomTheme.colorStart,
                 offset: Offset(1.0, 6.0),
                 blurRadius: 20.0,
               ),
               BoxShadow(
-                color: CustomTheme.loginGradientEnd,
+                color: CustomTheme.colorStart,
                 offset: Offset(1.0, 6.0),
                 blurRadius: 20.0,
               ),
             ],
-            gradient: LinearGradient(
-                colors: <Color>[
-                  CustomTheme.loginGradientEnd,
-                  CustomTheme.loginGradientStart
-                ],
-                begin: FractionalOffset(0.2, 0.2),
-                end: FractionalOffset(1.0, 1.0),
-                stops: <double>[0.0, 1.0],
-                tileMode: TileMode.clamp),
+            gradient: CustomTheme.primaryGradient,
           ),
           child: MaterialButton(
             highlightColor: Colors.transparent,
-            splashColor: CustomTheme.loginGradientStart,
+            splashColor: CustomTheme.colorEnd,
             child: Container(
               child: Center(
                 child: Text(

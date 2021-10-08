@@ -3,7 +3,9 @@ import 'package:flutter_app/blocs/feedback_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/feedback_event.dart';
+import 'package:flutter_app/screens/manager_view/fb_details_view.dart';
 import 'package:flutter_app/states/feedback_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,7 +16,7 @@ class FeedBackListView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: CustomTheme.loginGradientStart,
+        backgroundColor: CustomTheme.colorEnd,
         title: Center(
           child: Container(
             margin: EdgeInsets.only(right: 50),
@@ -34,15 +36,7 @@ class FeedBackListView extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              colors: <Color>[
-                CustomTheme.loginGradientStart,
-                CustomTheme.loginGradientEnd
-              ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 1.0),
-              stops: <double>[0.0, 1.0],
-              tileMode: TileMode.clamp),
+          gradient: CustomTheme.primaryGradient,
         ),
         child: BlocConsumer<FeedBackBloc, FeedBackState>(
             builder: (context, state) {
@@ -62,66 +56,67 @@ class FeedBackListView extends StatelessWidget {
                   itemCount: feedbacks.length,
                   itemBuilder: (context, index) {
                     final feedback = feedbacks[index];
-                    return Card(
-                      child: Container(
-                        margin: EdgeInsets.all(10),
-                        child: Row(
-                          children: <Widget>[
-                            /*Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    color: Colors.blueAccent),
-                                child: Icon(
-                                  Icons.report,
-                                  color: Colors.white,
-                                )),*/
-                            Container(
-                              width: data.size.shortestSide <= 375 ? 260 : 300,
-                              margin: EdgeInsets.only(left: 10, right: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    'Tiêu đề: ${feedback.title}',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    'ID KH: ${feedback.patientId}',
-                                    style: TextStyle(
-                                      fontSize: 16,
+                    return InkWell(
+                      child: Card(
+                        child: Container(
+                          margin: EdgeInsets.all(10),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                width:
+                                    data.size.shortestSide <= 375 ? 250 : 300,
+                                margin: EdgeInsets.only(left: 10, right: 10),
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      'Tiêu đề: ${feedback.title}',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    'Nội dung: ${feedback.content}',
-                                    style: TextStyle(fontSize: 16),
-                                    maxLines: 3,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    'Thời gian: ${feedback.date} ${feedback.time}',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      'ID KH: ${feedback.patientId}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    // Text(
+                                    //   'Nội dung: ${feedback.content}',
+                                    //   style: TextStyle(fontSize: 16),
+                                    //   maxLines: 3,
+                                    // ),
+                                    // SizedBox(
+                                    //   height: 10,
+                                    // ),
+                                    Text(
+                                      'Thời gian: ${feedback.date} ${feedback.time}',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
+                      onTap: () {
+                        print('test');
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => FeedBackDetailView(
+                                  feedback: feedback,
+                                )));
+                      },
                     );
                   }),
             );
@@ -156,7 +151,8 @@ class FeedBackListView extends StatelessWidget {
         }, listener: (context, state) {
           if (state is FeedBackStateSuccess) {
           } else if (state is FeedBackStateLogout) {
-            Navigator.popAndPushNamed(context, '/login');
+            // Navigator.popAndPushNamed(context, '/login');
+            Utils.gotoLogin(context);
           } else {
             _showSnackBar(context, 'Lấy phản hồi lỗi', false);
           }

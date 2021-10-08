@@ -267,7 +267,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               ),
             ),
           ),
-          backgroundColor: CustomTheme.loginGradientStart,
+          backgroundColor: CustomTheme.colorEnd,
           actions: <Widget>[
             PopupMenuButton<String>(
               onSelected: handleClick,
@@ -312,15 +312,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: <Color>[
-                  CustomTheme.loginGradientStart,
-                  CustomTheme.loginGradientEnd
-                ],
-                begin: FractionalOffset(0.0, 0.0),
-                end: FractionalOffset(1.0, 1.0),
-                stops: <double>[0.0, 1.0],
-                tileMode: TileMode.clamp),
+            gradient: CustomTheme.primaryGradient,
           ),
           // child: SingleChildScrollView(
           child: Column(
@@ -405,6 +397,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
                 if (state is ScheduleDelStateSuccess) {
                   print('state: $state');
+                  if (state.response.status == 'ok') {
+                    _showSnackBar('Hủy lịch thành công', true);
+                  } else {
+                    _showToast('Hủy lịch lỗi', '${state.response.message}',
+                        false, () {});
+                  }
                   BlocProvider.of<ScheduleBloc>(context).add(
                       ScheduleEventRequested(
                           dentistId: _dentist.id,
@@ -490,25 +488,17 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: CustomTheme.loginGradientStart,
+                          color: CustomTheme.colorStart,
                           offset: Offset(1.0, 6.0),
                           blurRadius: 20.0,
                         ),
                         BoxShadow(
-                          color: CustomTheme.loginGradientEnd,
+                          color: CustomTheme.colorEnd,
                           offset: Offset(1.0, 6.0),
                           blurRadius: 20.0,
                         ),
                       ],
-                      gradient: LinearGradient(
-                          colors: <Color>[
-                            CustomTheme.loginGradientEnd,
-                            CustomTheme.loginGradientStart
-                          ],
-                          begin: FractionalOffset(0.2, 0.2),
-                          end: FractionalOffset(1.0, 1.0),
-                          stops: <double>[0.0, 1.0],
-                          tileMode: TileMode.clamp),
+                      gradient: CustomTheme.primaryGradient,
                     ),
                     child: MaterialButton(
                       padding: EdgeInsets.symmetric(horizontal: 45),
@@ -776,7 +766,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         }
                       },
                       isSelected: isSelected,
-                      fillColor: CustomTheme.loginGradientEnd,
+                      fillColor: CustomTheme.colorStart,
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       borderColor: Colors.white,
                       selectedBorderColor: Colors.white,
@@ -793,32 +783,23 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           height: 50,
           margin: EdgeInsets.symmetric(horizontal: 55.0, vertical: 10),
           decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: CustomTheme.loginGradientStart,
-                offset: Offset(1.0, 6.0),
-                blurRadius: 20.0,
-              ),
-              BoxShadow(
-                color: CustomTheme.loginGradientEnd,
-                offset: Offset(1.0, 6.0),
-                blurRadius: 20.0,
-              ),
-            ],
-            gradient: LinearGradient(
-                colors: <Color>[
-                  CustomTheme.loginGradientEnd,
-                  CustomTheme.loginGradientStart
-                ],
-                begin: FractionalOffset(0.2, 0.2),
-                end: FractionalOffset(1.0, 1.0),
-                stops: <double>[0.0, 1.0],
-                tileMode: TileMode.clamp),
-          ),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: CustomTheme.colorStart,
+                  offset: Offset(1.0, 6.0),
+                  blurRadius: 20.0,
+                ),
+                BoxShadow(
+                  color: CustomTheme.colorEnd,
+                  offset: Offset(1.0, 6.0),
+                  blurRadius: 20.0,
+                ),
+              ],
+              gradient: CustomTheme.primaryGradient),
           child: MaterialButton(
             highlightColor: Colors.transparent,
-            splashColor: CustomTheme.loginGradientStart,
+            splashColor: CustomTheme.colorStart,
             child: Container(
               child: Center(
                 child: Text(

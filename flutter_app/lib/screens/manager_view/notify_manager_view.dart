@@ -35,7 +35,7 @@ class _NotifyManagerViewState extends State<NotifyManagerView> {
                 child: Center(child: Icon(Icons.arrow_back_ios))),
           ),
         ),
-        backgroundColor: CustomTheme.loginGradientStart,
+        backgroundColor: CustomTheme.colorEnd,
         title: Center(
           child: Container(
             margin: EdgeInsets.only(right: 50),
@@ -55,15 +55,7 @@ class _NotifyManagerViewState extends State<NotifyManagerView> {
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.only(bottom: 20),
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              colors: <Color>[
-                CustomTheme.loginGradientStart,
-                CustomTheme.loginGradientEnd
-              ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 1.0),
-              stops: <double>[0.0, 1.0],
-              tileMode: TileMode.clamp),
+          gradient: CustomTheme.primaryGradient,
         ),
         child: BlocConsumer<NotifyBloc, NotifyState>(
           listener: (context, state) {
@@ -158,25 +150,17 @@ class _NotifyManagerViewState extends State<NotifyManagerView> {
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: CustomTheme.loginGradientStart,
+                      color: CustomTheme.colorStart,
                       offset: Offset(1.0, 6.0),
                       blurRadius: 20.0,
                     ),
                     BoxShadow(
-                      color: CustomTheme.loginGradientEnd,
+                      color: CustomTheme.colorEnd,
                       offset: Offset(1.0, 6.0),
                       blurRadius: 20.0,
                     ),
                   ],
-                  gradient: LinearGradient(
-                      colors: <Color>[
-                        CustomTheme.loginGradientEnd,
-                        CustomTheme.loginGradientStart
-                      ],
-                      begin: FractionalOffset(0.2, 0.2),
-                      end: FractionalOffset(1.0, 1.0),
-                      stops: <double>[0.0, 1.0],
-                      tileMode: TileMode.clamp),
+                  gradient: CustomTheme.primaryGradient,
                 ),
                 child: MaterialButton(
                   padding: EdgeInsets.symmetric(horizontal: 45),

@@ -5,6 +5,7 @@ import 'package:flutter_app/blocs/history_bloc.dart';
 import 'package:flutter_app/customs/custom_circular_progress.dart';
 import 'package:flutter_app/customs/snackbar.dart';
 import 'package:flutter_app/customs/themes.dart';
+import 'package:flutter_app/customs/utils.dart';
 import 'package:flutter_app/events/history_event.dart';
 import 'package:flutter_app/models/history_response.dart';
 import 'package:flutter_app/states/history_state.dart';
@@ -35,7 +36,8 @@ class _HistoryViewState extends State<HistoryView> {
             _showSnackBar("get Schedule failure", false);
           }
           if (state is HistoryStateLogout) {
-            Navigator.popAndPushNamed(context, '/login');
+            // Navigator.popAndPushNamed(context, '/login');
+            Utils.gotoLogin(context);
           }
         },
         builder: (context, state) {
@@ -52,25 +54,17 @@ class _HistoryViewState extends State<HistoryView> {
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: CustomTheme.loginGradientStart,
+                      color: CustomTheme.colorStart,
                       offset: Offset(1.0, 6.0),
                       blurRadius: 20.0,
                     ),
                     BoxShadow(
-                      color: CustomTheme.loginGradientEnd,
+                      color: CustomTheme.colorEnd,
                       offset: Offset(1.0, 6.0),
                       blurRadius: 20.0,
                     ),
                   ],
-                  gradient: LinearGradient(
-                      colors: <Color>[
-                        CustomTheme.loginGradientEnd,
-                        CustomTheme.loginGradientStart
-                      ],
-                      begin: FractionalOffset(0.2, 0.2),
-                      end: FractionalOffset(1.0, 1.0),
-                      stops: <double>[0.0, 1.0],
-                      tileMode: TileMode.clamp),
+                  gradient: CustomTheme.primaryGradient,
                 ),
                 child: MaterialButton(
                   padding: EdgeInsets.symmetric(horizontal: 45),
@@ -144,25 +138,17 @@ class _HistoryViewState extends State<HistoryView> {
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: CustomTheme.loginGradientStart,
+                    color: CustomTheme.colorStart,
                     offset: Offset(1.0, 6.0),
                     blurRadius: 20.0,
                   ),
                   BoxShadow(
-                    color: CustomTheme.loginGradientEnd,
+                    color: CustomTheme.colorEnd,
                     offset: Offset(1.0, 6.0),
                     blurRadius: 20.0,
                   ),
                 ],
-                gradient: LinearGradient(
-                    colors: <Color>[
-                      CustomTheme.loginGradientEnd,
-                      CustomTheme.loginGradientStart
-                    ],
-                    begin: FractionalOffset(0.2, 0.2),
-                    end: FractionalOffset(1.0, 1.0),
-                    stops: <double>[0.0, 1.0],
-                    tileMode: TileMode.clamp),
+                gradient: CustomTheme.primaryGradient,
               ),
               child: MaterialButton(
                 padding: EdgeInsets.symmetric(horizontal: 45),

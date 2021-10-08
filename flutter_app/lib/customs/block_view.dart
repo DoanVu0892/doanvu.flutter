@@ -154,9 +154,7 @@ class _BlockItemState extends State<BlockItem> {
                       );
                     },
                   ),
-                  okBtnFunction: (_patient != null &&
-                          _patient.id != null &&
-                          _patient.id != '')
+                  okBtnFunction: (_patient.toString() != '')
                       ? () => {
                             print(
                                 'textNote: ${noteController.text} -patientId: ${_patient.id} -patientName: ${_patient.name} -dentistId: ${widget.dentistId} -appointmentDate: ${widget.appointmentDate} -blockId: ${widget.schedule.blockId}'),
@@ -172,7 +170,8 @@ class _BlockItemState extends State<BlockItem> {
                             Navigator.of(context).pop(),
                           }
                       : () => {
-                            print('_patient $_patient'),
+                            print(
+                                '_patient: $_patient _patientId: ${_patient.toString()}'),
                             showToast('Vui lòng chọn bệnh nhân'),
                           },
                 ),

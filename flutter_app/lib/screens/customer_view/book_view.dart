@@ -85,17 +85,7 @@ class _BookViewState extends State<BookView> {
     return Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              colors: <Color>[
-                CustomTheme.loginGradientStart,
-                CustomTheme.loginGradientEnd
-              ],
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(1.0, 1.0),
-              stops: <double>[0.0, 1.0],
-              tileMode: TileMode.clamp),
-        ),
+        decoration: const BoxDecoration(gradient: CustomTheme.primaryGradient),
         // child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -180,6 +170,12 @@ class _BookViewState extends State<BookView> {
                   setState(() {
                     this.startBooked = false;
                   });
+                  if (state.response.status == 'ok') {
+                    _showSnackBar('Hủy lịch thành công', true);
+                  } else {
+                    _showToast('Hủy lịch lỗi', '${state.response.message}',
+                        false, () {});
+                  }
                   print('state: $state');
                   BlocProvider.of<ScheduleBloc>(context).add(
                       ScheduleEventRequested(
@@ -250,38 +246,6 @@ class _BookViewState extends State<BookView> {
             margin: EdgeInsets.only(left: 40, top: 20, right: 40),
             child: Column(
               children: [
-                /*Container(
-                  alignment: Alignment.centerLeft,
-                  margin: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Tên nha sỹ:',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade900),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Center(
-                          child: Text(
-                        widget.user.dentistName,
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: CustomTheme.loginGradientEnd),
-                      ))
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 250.0,
-                  height: 1.0,
-                  color: Colors.grey[400],
-                ),*/
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: EdgeInsets.all(10),
@@ -305,7 +269,7 @@ class _BookViewState extends State<BookView> {
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: CustomTheme.loginGradientEnd),
+                            color: CustomTheme.colorStart),
                       ))
                     ],
                   ),
@@ -399,7 +363,7 @@ class _BookViewState extends State<BookView> {
                             }
                           },
                           isSelected: isSelected,
-                          fillColor: CustomTheme.loginGradientEnd,
+                          fillColor: CustomTheme.colorStart,
                           borderRadius: BorderRadius.all(Radius.circular(5.0)),
                           borderColor: Colors.white,
                           selectedBorderColor: Colors.white,
@@ -416,29 +380,21 @@ class _BookViewState extends State<BookView> {
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: CustomTheme.loginGradientStart,
+                  color: CustomTheme.colorStart,
                   offset: Offset(1.0, 6.0),
                   blurRadius: 20.0,
                 ),
                 BoxShadow(
-                  color: CustomTheme.loginGradientEnd,
+                  color: CustomTheme.colorEnd,
                   offset: Offset(1.0, 6.0),
                   blurRadius: 20.0,
                 ),
               ],
-              gradient: LinearGradient(
-                  colors: <Color>[
-                    CustomTheme.loginGradientEnd,
-                    CustomTheme.loginGradientStart
-                  ],
-                  begin: FractionalOffset(0.2, 0.2),
-                  end: FractionalOffset(1.0, 1.0),
-                  stops: <double>[0.0, 1.0],
-                  tileMode: TileMode.clamp),
+              gradient: CustomTheme.primaryGradient,
             ),
             child: MaterialButton(
               highlightColor: Colors.transparent,
-              splashColor: CustomTheme.loginGradientStart,
+              splashColor: CustomTheme.colorEnd,
               child: Container(
                 child: Center(
                   child: Text(

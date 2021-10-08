@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/customs/themes.dart';
 
-class AddUserManager extends StatelessWidget{
+class AddUserManager extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +33,7 @@ class AddUserManager extends StatelessWidget{
             ),
           ),
         ),
-        backgroundColor: CustomTheme.loginGradientStart,
+        backgroundColor: CustomTheme.colorEnd,
       ),
       body: null,
     );
