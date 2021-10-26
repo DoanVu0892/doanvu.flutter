@@ -11,7 +11,8 @@ import 'package:flutter_app/models/schedule.dart';
 import 'package:flutter_app/states/patient_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:search_choices/search_choices.dart';
+// import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 import 'custom_circular_progress.dart';
@@ -99,23 +100,43 @@ class _BlockItemState extends State<BlockItem> {
                         height: 180,
                         child: Column(
                           children: <Widget>[
+                            // Expanded(
+                            //   // flex: 1,
+                            //   child: SearchableDropdown<Patient>(
+                            //     isCaseSensitiveSearch: true,
+                            //     isExpanded: true,
+                            //     style: TextStyle(
+                            //         fontSize: 18,
+                            //         color: Colors.grey.shade900,
+                            //         fontWeight: FontWeight.w400),
+                            //     hint: Text(
+                            //       "Chọn bệnh nhân",
+                            //       style: TextStyle(
+                            //         fontSize: 18,
+                            //         color: Colors.grey.shade900,
+                            //         fontWeight: FontWeight.w400,
+                            //       ),
+                            //     ),
+                            //     value: _patient,
+                            //     items: patientList.map((Patient patient) {
+                            //       return DropdownMenuItem<Patient>(
+                            //         value: patient,
+                            //         child: Container(
+                            //           color: Colors.transparent,
+                            //           child: Text('${patient.id}'),
+                            //         ),
+                            //       );
+                            //     }).toList(),
+                            //     onChanged: (data) {
+                            //       print('value $data');
+                            //       setState(() {
+                            //         this._patient = data;
+                            //       });
+                            //     },
+                            //   ),
+                            // ),
                             Expanded(
-                              // flex: 1,
-                              child: SearchableDropdown<Patient>(
-                                isCaseSensitiveSearch: true,
-                                isExpanded: true,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey.shade900,
-                                    fontWeight: FontWeight.w400),
-                                hint: Text(
-                                  "Chọn bệnh nhân",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey.shade900,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
+                              child: SearchChoices.single(
                                 value: _patient,
                                 items: patientList.map((Patient patient) {
                                   return DropdownMenuItem<Patient>(
@@ -126,12 +147,29 @@ class _BlockItemState extends State<BlockItem> {
                                     ),
                                   );
                                 }).toList(),
+                                hint: Text(
+                                  "Chọn bệnh nhân",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey.shade900,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                searchHint: Text(
+                                  "Chọn bệnh nhân",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey.shade900,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
                                 onChanged: (data) {
                                   print('value $data');
                                   setState(() {
                                     this._patient = data;
                                   });
                                 },
+                                isExpanded: true,
                               ),
                             ),
                             Expanded(

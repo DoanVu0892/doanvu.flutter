@@ -363,7 +363,7 @@ class _ManageScreenState extends State<ManageScreen> {
                                           clinicId: clinic.id));
                                   Navigator.of(context).pop();
                                 }
-                              });
+                              }, titleStyle: null);
                             },
                           ),
                         );

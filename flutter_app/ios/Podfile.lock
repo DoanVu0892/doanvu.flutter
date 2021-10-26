@@ -64,7 +64,7 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - PromisesObjC (1.2.12)
-  - searchable_dropdown (1.1.1):
+  - search_choices (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -73,7 +73,7 @@ DEPENDENCIES:
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
-  - searchable_dropdown (from `.symlinks/plugins/searchable_dropdown/ios`)
+  - search_choices (from `.symlinks/plugins/search_choices/ios`)
 
 SPEC REPOS:
   trunk:
@@ -98,8 +98,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
-  searchable_dropdown:
-    :path: ".symlinks/plugins/searchable_dropdown/ios"
+  search_choices:
+    :path: ".symlinks/plugins/search_choices/ios"
 
 SPEC CHECKSUMS:
   alert: fa3137f80aa8ff29c8efbee8df29648605f622f7
@@ -110,13 +110,13 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnostics: 61384f54989065b15c36b5922b65112e86811d3c
   FirebaseInstallations: 9394ea09e242bf0816e95ac30e56a9214cc86ced
   FirebaseMessaging: 1a33b4af3c8042ed6ddacb6c031894af2064bfab
-  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   GoogleDataTransport: 04c3e9a480bbcaa2ec3f5d27f1cdeb6a92f20c8d
   GoogleUtilities: 45dbb24a7f351d69d0a601482b39ad6c32e30dab
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
-  searchable_dropdown: 5058be32fdc5e0481d300ff2087129072e71bd62
+  search_choices: b50731e8c425078048f681f39c34375c58d6ce8d
 
 PODFILE CHECKSUM: 3dffd8c48b531d21ec0ec153c22dc8e3a6223bc9
 

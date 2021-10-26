@@ -271,7 +271,7 @@ class _DentistScreenState extends State<DentistScreen> {
                                   phone: phoneController.text,
                                 ));
                                 Navigator.of(context).pop();
-                              })
+                              }, titleStyle: null)
                             },
                           ),
                           new IconSlideAction(
