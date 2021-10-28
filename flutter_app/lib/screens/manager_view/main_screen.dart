@@ -521,49 +521,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           padding: EdgeInsets.all(16),
           child: Column(
             children: <Widget>[
-              /*Container(
-                  padding: EdgeInsets.only(left: 22, right: 10),
-                  margin: EdgeInsets.symmetric(vertical: 0, horizontal: 40),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    color: Colors.white,
-                  ),
-                  child: Theme(
-                    data: Theme.of(context).copyWith(canvasColor: Colors.white),
-                    child: DropdownButton<Clinic>(
-                      isExpanded: true,
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey.shade900,
-                          fontWeight: FontWeight.w400),
-                      hint: Text(
-                        "Chọn chi nhánh",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey.shade900,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      value: _clinic,
-                      items: clinicList.map((Clinic clinic) {
-                        return DropdownMenuItem<Clinic>(
-                          value: clinic,
-                          child: Container(
-                            color: Colors.transparent,
-                            child: new Text(clinic.name),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (data) {
-                        print('value $data');
-                        setState(() {
-                          this._clinic = data;
-                        });
-                        BlocProvider.of<DentistBloc>(context)
-                            .add(DentistEventRequested(clinicId: _clinic.id));
-                      },
-                    ),
-                  ))*/
               Container(
                 margin: EdgeInsets.symmetric(vertical: 0, horizontal: 40),
                 padding: EdgeInsets.only(left: 22, right: 10),
@@ -609,77 +566,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             ],
           ),
         ),
-        /*
-        Container(
-          child: BlocConsumer<DentistBloc, DentistState>(
-            listener: (context, state) {
-              if (state is DentistStateSuccess) {
-                setState(() {
-                  dentistData = state.response.dataList;
-                });
-                if (dentistData == null || dentistData.isEmpty) {
-                  _showSnackBar('Không có dữ liệu!!!', false);
-                }
-              }
-            },
-            builder: (context, state) {
-              if (state is DentistStateLoading) {
-                return CircularProgress();
-              }
-              return Container(
-                alignment: Alignment.topCenter,
-                padding: EdgeInsets.only(left: 16, right: 16, bottom: 5),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 0, horizontal: 40),
-                      padding: EdgeInsets.only(left: 22, right: 10),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        color: Colors.white,
-                      ),
-                      child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(canvasColor: Colors.white),
-                        child: DropdownButton<DentistData>(
-                          isExpanded: true,
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey.shade900,
-                              fontWeight: FontWeight.w400),
-                          hint: Text(
-                            "Chọn nha sỹ",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey.shade900,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          value: _dentist,
-                          items: dentistData.map((DentistData dentist) {
-                            return DropdownMenuItem<DentistData>(
-                              value: dentist,
-                              child: Container(
-                                color: Colors.transparent,
-                                child: new Text(dentist.name),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (data) {
-                            print('value $data');
-                            setState(() {
-                              this._dentist = data;
-                            });
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-        ),*/
+        
         Container(
             margin: EdgeInsets.only(left: 15, right: 15),
             padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
