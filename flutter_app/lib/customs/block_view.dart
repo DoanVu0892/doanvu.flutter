@@ -12,6 +12,7 @@ import 'package:flutter_app/states/patient_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:search_choices/search_choices.dart';
+// import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:toast/toast.dart';
 
 import 'custom_circular_progress.dart';
