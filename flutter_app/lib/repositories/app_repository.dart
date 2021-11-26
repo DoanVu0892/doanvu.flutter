@@ -78,6 +78,7 @@ class AppRepository {
       httpClient.close();
       return responseData;
     } else {
+      print('response ${response.statusCode}');
       httpClient.close();
       throw Exception('Error Login of: $phoneNumber');
     }
@@ -93,6 +94,7 @@ class AppRepository {
       'Authorization': 'Bearer $accessToken',
     });
     if (response.statusCode == 200) {
+      print("${response.statusCode}");
       httpClient.close();
       return response;
     } else if (response.statusCode == 401) {

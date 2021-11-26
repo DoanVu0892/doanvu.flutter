@@ -289,7 +289,7 @@ class _LoginScreenState extends State<LoginScreen>
           child: Center(
             child: SingleChildScrollView(
               child: BlocConsumer<LoginBloc, LoginState>(
-                listener: (context, loginState) async {
+                listener: (context, loginState) {
                   if (loginState is LoginStateSuccess) {
                     //checkUser
                     setState(() {
@@ -300,9 +300,10 @@ class _LoginScreenState extends State<LoginScreen>
                       // BlocProvider.of<PlatformBloc>(context).add(
                       //    PlatformEventRequested(token: widget.tokenDevice, patientId: user.id)
                       //  );
-                      final response = await widget.appRepository
+                      // final response =
+                      widget.appRepository
                           .sendDeviceToken(widget.tokenDevice, '${user.id}');
-                      print("check: ${response.statusCode}");
+                      // print("check: ${response.statusCode}");
                     }
 
                     if (loginState.response.data.user.userType == 'manager') {
